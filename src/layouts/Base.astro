@@ -1,0 +1,79 @@
+---
+interface Props {
+  title?: string
+  description?: string
+}
+const {
+  title = 'Lootus Kollektiv — Konstanz',
+  description = 'Lootus Kollektiv — Techno aus Konstanz am Bodensee. Progressive · Peaktime · Acid.',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter+Tight:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>document.documentElement.classList.add('js')</script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      // Mount animations — fire immediately
+      document.querySelectorAll<HTMLElement>('[data-mount]').forEach(el => {
+        if (reduce) { el.classList.add('visible'); return }
+        requestAnimationFrame(() => el.classList.add('visible'))
+      })
+
+      // Scroll-triggered animations
+      if (!reduce) {
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible')
+              obs.unobserve(entry.target)
+            }
+          })
+        }, { rootMargin: '-10% 0px' })
+        document.querySelectorAll('[data-scroll]').forEach(el => obs.observe(el))
+      } else {
+        document.querySelectorAll('[data-scroll]').forEach(el => el.classList.add('visible'))
+      }
+
+      // Lake parallax
+      if (!reduce) {
+        const panel = document.getElementById('lake-parallax')
+        if (panel) {
+          const img = panel.querySelector<HTMLElement>('.lakePhotoLayer')
+          const bloom = panel.querySelector<HTMLElement>('.lakeBloom')
+          let ticking = false
+          function updateParallax() {
+            const rect = panel!.getBoundingClientRect()
+            const vh = window.innerHeight
+            if (rect.bottom < 0 || rect.top > vh) return
+            const t = (vh - rect.top) / (vh + rect.height)
+            if (img) img.style.transform = `translateY(${-7 + t * 14}%)`
+            if (bloom) bloom.style.transform = `translate(-50%,-50%) translateY(${7 - t * 18}%)`
+          }
+          window.addEventListener('scroll', () => {
+            if (!ticking) {
+              requestAnimationFrame(() => { updateParallax(); ticking = false })
+              ticking = true
+            }
+          }, { passive: true })
+          updateParallax()
+        }
+      }
+    </script>
+  </body>
+</html>

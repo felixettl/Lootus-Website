@@ -1,0 +1,51 @@
+---
+interface Props {
+  size?: number
+  color?: string
+  variant?: 'solid' | 'outline'
+  strokeWidth?: number
+  class?: string
+  title?: string
+  style?: string
+}
+const {
+  size = 40,
+  color = 'currentColor',
+  variant = 'solid',
+  strokeWidth = 4,
+  class: className,
+  title = 'Lootus Kollektiv',
+  style,
+} = Astro.props
+
+const petal = 'M100 100 C82 74 80 46 100 14 C120 46 118 74 100 100 Z'
+const petals = Array.from({ length: 8 }, (_, i) => i * 45)
+const fill = variant === 'solid' ? color : 'none'
+const stroke = variant === 'solid' ? 'none' : color
+---
+
+<svg
+  class={className}
+  style={style}
+  width={size}
+  height={size}
+  viewBox="0 0 200 200"
+  role="img"
+  aria-label={title}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title>{title}</title>
+  <g>
+    {petals.map((deg) => (
+      <path
+        d={petal}
+        fill={fill}
+        stroke={stroke}
+        stroke-width={strokeWidth}
+        stroke-linejoin="round"
+        transform={`rotate(${deg} 100 100)`}
+        opacity={variant === 'solid' ? 0.92 : 1}
+      />
+    ))}
+  </g>
+</svg>

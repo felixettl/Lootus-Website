@@ -1,0 +1,36 @@
+---
+import { brand } from '../data/lootus.js'
+import LakePanel from './LakePanel.astro'
+---
+
+<section class="hero" aria-label="Intro">
+  <div class="heroText">
+    <div data-animate="rise" data-mount style="--delay:0.05s" class="kicker">
+      {brand.city} · seit {brand.founded}
+    </div>
+
+    <h1 class="heroTitle" data-animate="lines" data-mount>
+      <span class="lineMask"><span style="--delay:0.12s">Nächte, die</span></span>
+      <span class="lineMask"><span style="--delay:0.22s">den <em class="em">See</em></span></span>
+      <span class="lineMask"><span style="--delay:0.32s">überdauern.</span></span>
+    </h1>
+
+    <div data-animate="rise" data-mount style="--delay:0.5s" class="heroLede">
+      Ein Kollektiv am Bodensee. Progressive, Peaktime, Acid —
+      gebaut für die Stunden, in denen das Ufer verschwindet.
+    </div>
+
+    <div data-animate="rise" data-mount style="--delay:0.62s" class="heroSound">
+      {brand.sound.map((s, i) => (
+        <span class="soundItem">
+          {s}
+          {i < brand.sound.length - 1 && <i class="soundDot">·</i>}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <div class="heroPanel" data-mount>
+    <LakePanel caption="Bodensee — 47.66° N, nach Mitternacht" />
+  </div>
+</section>

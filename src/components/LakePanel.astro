@@ -1,0 +1,31 @@
+---
+import Photo from './Photo.astro'
+import Grain from './Grain.astro'
+import { media } from '../data/media.js'
+
+interface Props {
+  caption?: string
+}
+const { caption } = Astro.props
+---
+
+<div class="lakePanel" id="lake-parallax">
+  <div class="lakePhotoLayer">
+    <Photo
+      src={media.lake}
+      alt="Nebel über dem Bodensee, kurz nach Mitternacht"
+      class="lakePhoto"
+      position="50% 42%"
+      priority
+      shade={false}
+      grain={false}
+    />
+  </div>
+
+  <div class="lakeBloom" aria-hidden="true"></div>
+
+  <Grain class="lakeGrain" opacity={0.07} seed={11} />
+  <div class="lakeVignette" aria-hidden="true"></div>
+
+  {caption && <span class="lakeCaption">{caption}</span>}
+</div>

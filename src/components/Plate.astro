@@ -1,0 +1,46 @@
+---
+import Grain from './Grain.astro'
+import Photo from './Photo.astro'
+import { media } from '../data/media.js'
+import { stats } from '../data/lootus.js'
+---
+
+<section class="plate" aria-label="Sound">
+  <Grain class="plateGrain" opacity={0.04} seed={4} />
+
+  <div class="plateInner">
+    <div data-animate="rise" data-scroll style="--y:30px" class="plateFigure">
+      <Photo
+        src={media.lakeWide}
+        alt="Der See im Morgengrauen, spiegelglatt"
+        class="plateFigureImg"
+        position="50% 55%"
+        shade="bottom"
+        seed={6}
+      />
+      <span class="plateFigureCap">Hörnle, Bodensee — Blaue Stunde</span>
+    </div>
+
+    <div data-animate="rise" data-scroll class="plateKicker">Das Klangbild</div>
+
+    <h2 class="plateSound" data-animate="lines" data-scroll>
+      <span class="lineMask"><span>Progressive.</span></span>
+      <span class="lineMask"><span style="--delay:0.08s"><em class="emDark">Peaktime.</em></span></span>
+      <span class="lineMask"><span style="--delay:0.16s">Acid.</span></span>
+    </h2>
+
+    <div data-animate="rise" data-scroll style="--delay:0.2s" class="plateBody">
+      Drei Temperaturen einer Nacht — vom langsamen Aufziehen bis zur
+      Stunde, in der die Maschine spricht.
+    </div>
+
+    <dl class="figures">
+      {stats.map((s, i) => (
+        <div data-animate="rise" data-scroll style={`--delay:${0.1 + i * 0.06}s`} class="figure">
+          <dt class="figureNum">{s.value}</dt>
+          <dd class="figureLabel">{s.label}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

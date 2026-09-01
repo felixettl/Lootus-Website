@@ -1,0 +1,39 @@
+---
+import Grain from './Grain.astro'
+
+interface Props {
+  src: string
+  alt: string
+  class?: string
+  position?: string
+  priority?: boolean
+  shade?: string | false
+  grain?: boolean
+  seed?: number
+}
+const {
+  src,
+  alt,
+  class: className = '',
+  position = 'center',
+  priority = false,
+  shade = 'bottom',
+  grain = true,
+  seed = 5,
+} = Astro.props
+---
+
+<figure class:list={['photo', className]}>
+  <img
+    class="photoImg"
+    src={src}
+    alt={alt}
+    loading={priority ? 'eager' : 'lazy'}
+    decoding="async"
+    draggable="false"
+    style={`object-position:${position}`}
+  />
+  <span class="photoDuo" aria-hidden="true"></span>
+  {shade !== false && <span class="photoShade" data-shade={shade} aria-hidden="true"></span>}
+  {grain && <Grain class="photoGrain" opacity={0.06} seed={seed} />}
+</figure>

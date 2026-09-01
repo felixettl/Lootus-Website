@@ -1,0 +1,69 @@
+---
+import Photo from './Photo.astro'
+import type { CalendarEvent } from '../data/calendar'
+
+interface Props {
+  events: CalendarEvent[]
+}
+const { events } = Astro.props
+---
+
+<section class="programm" id="programm" aria-label="Programm">
+  <div class="sectionHead">
+    <div data-animate="rise" data-scroll class="sectionKicker">Programm</div>
+    <div data-animate="rise" data-scroll style="--delay:0.08s" class="sectionNote">
+      Index kommender &amp; vergangener Nächte
+    </div>
+  </div>
+
+  {events.length === 0 && (
+    <div data-animate="rise" data-scroll style="--delay:0.12s" class="sectionNote">
+      Aktuell keine Events geplant — stay tuned.
+    </div>
+  )}
+
+  <ol class="index">
+    {events.map((ev, i) => (
+      <li>
+        <div data-animate="rise" data-scroll style={`--delay:${i * 0.04}s;--y:30px`} class="rowWrap">
+          <a class="row" href={`#${ev.id}`} data-status={ev.status}>
+            <span class="rowNo">{String(i + 1).padStart(2, '0')}</span>
+
+            {ev.image && (
+              <span class="rowThumb">
+                <Photo
+                  src={ev.image}
+                  alt={`${ev.title} — ${ev.place}`}
+                  class="rowThumbImg"
+                  position="center"
+                  shade="bottom"
+                  grain={false}
+                  seed={20 + i}
+                />
+              </span>
+            )}
+
+            <span class="rowMain">
+              <span class="rowTitle">
+                {ev.title}
+                <span class="rowUnderline" aria-hidden="true"></span>
+              </span>
+              <span class="rowMeta">
+                {[ev.venue, ev.place, ev.genre].filter(Boolean).join(' · ')}
+              </span>
+            </span>
+
+            <span class="rowDate">
+              <span class="rowDateNum">{ev.dateLabel}</span>
+              <span class="rowStatus">
+                {ev.status === 'upcoming' ? 'kommend' : 'gewesen'}
+              </span>
+            </span>
+
+            <span class="rowArrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

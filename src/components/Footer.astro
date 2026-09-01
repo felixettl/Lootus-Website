@@ -1,0 +1,30 @@
+---
+import LotusMark from './LotusMark.astro'
+import { brand } from '../data/lootus.js'
+---
+
+<footer class="footer" id="kontakt">
+  <div class="footRule"></div>
+  <div class="footGrid">
+    <div class="footBrand">
+      <span class="footMark">
+        <LotusMark size={34} color="var(--amber)" variant="solid" class="footMarkIcon" />
+        <span>Lootus</span>
+      </span>
+      <span class="footLegal">{brand.legal}</span>
+    </div>
+
+    <div class="footMeta">
+      <span>{brand.city} · {brand.region}</span>
+      <span>{brand.coords}</span>
+    </div>
+
+    <p class="footLine">
+      Wir sehen uns dort, wo der See den Bass verschluckt.
+    </p>
+  </div>
+  <div class="footBase">
+    <span>© {brand.founded}–{new Date().getFullYear()} {brand.short}</span>
+    <span>Lootus Kollektiv — Konstanz</span>
+  </div>
+</footer>
