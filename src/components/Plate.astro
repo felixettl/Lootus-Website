@@ -1,7 +1,5 @@
 ---
 import Grain from './Grain.astro'
-import Photo from './Photo.astro'
-import { media } from '../data/media.js'
 import { stats } from '../data/lootus.js'
 ---
 
@@ -9,18 +7,6 @@ import { stats } from '../data/lootus.js'
   <Grain class="plateGrain" opacity={0.04} seed={4} />
 
   <div class="plateInner">
-    <div data-animate="rise" data-scroll style="--y:30px" class="plateFigure">
-      <Photo
-        src={media.lakeWide}
-        alt="Der See im Morgengrauen, spiegelglatt"
-        class="plateFigureImg"
-        position="50% 55%"
-        shade="bottom"
-        seed={6}
-      />
-      <span class="plateFigureCap">Hörnle, Bodensee — Blaue Stunde</span>
-    </div>
-
     <div data-animate="rise" data-scroll class="plateKicker">Das Klangbild</div>
 
     <h2 class="plateSound" data-animate="lines" data-scroll>

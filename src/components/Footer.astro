@@ -1,5 +1,4 @@
 ---
-import LotusMark from './LotusMark.astro'
 import { brand } from '../data/lootus.js'
 ---
 
@@ -8,7 +7,7 @@ import { brand } from '../data/lootus.js'
   <div class="footGrid">
     <div class="footBrand">
       <span class="footMark">
-        <LotusMark size={34} color="var(--amber)" variant="solid" class="footMarkIcon" />
+        <img src="/img/Logo_TransBG.svg" alt="Lootus Kollektiv" class="footMarkIcon" width="34" height="34" />
         <span>Lootus</span>
       </span>
       <span class="footLegal">{brand.legal}</span>
@@ -20,7 +19,7 @@ import { brand } from '../data/lootus.js'
     </div>
 
     <p class="footLine">
-      Wir sehen uns dort, wo der See den Bass verschluckt.
+      Sei dabei — wir sehen uns auf dem Floor.
     </p>
   </div>
   <div class="footBase">

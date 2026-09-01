@@ -1,28 +1,16 @@
 ---
-import Photo from './Photo.astro'
 import { residents } from '../data/lootus.js'
-import { media } from '../data/media.js'
 ---
 
-<section class="residents" aria-label="Residents">
+<section class="residents" id="kollektiv" aria-label="Residents">
   <div class="mastheadHead">
     <div class="mastheadIntro">
       <div data-animate="rise" data-scroll class="sectionKicker">Kollektiv</div>
       <div data-animate="rise" data-scroll style="--delay:0.06s" class="mastheadTitle">
-        Die Stimmen<br />hinter der Nacht
+        Unsere DJs
       </div>
     </div>
-    <div data-animate="rise" data-scroll style="--delay:0.12s;--y:30px" class="mastheadPortrait">
-      <Photo
-        src={media.dj}
-        alt="An den Decks"
-        class="mastheadPortraitImg"
-        position="50% 35%"
-        shade="bottom"
-        seed={9}
-      />
-      <span class="portraitCaption">An den Decks · Resident-Set</span>
-    </div>
+
   </div>
 
   <ul class="masthead">

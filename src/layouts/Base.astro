@@ -16,6 +16,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="icon" href="/img/Logo_TransBG.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,30 +51,7 @@ const {
         document.querySelectorAll('[data-scroll]').forEach(el => el.classList.add('visible'))
       }
 
-      // Lake parallax
-      if (!reduce) {
-        const panel = document.getElementById('lake-parallax')
-        if (panel) {
-          const img = panel.querySelector<HTMLElement>('.lakePhotoLayer')
-          const bloom = panel.querySelector<HTMLElement>('.lakeBloom')
-          let ticking = false
-          function updateParallax() {
-            const rect = panel!.getBoundingClientRect()
-            const vh = window.innerHeight
-            if (rect.bottom < 0 || rect.top > vh) return
-            const t = (vh - rect.top) / (vh + rect.height)
-            if (img) img.style.transform = `translateY(${-7 + t * 14}%)`
-            if (bloom) bloom.style.transform = `translate(-50%,-50%) translateY(${7 - t * 18}%)`
-          }
-          window.addEventListener('scroll', () => {
-            if (!ticking) {
-              requestAnimationFrame(() => { updateParallax(); ticking = false })
-              ticking = true
-            }
-          }, { passive: true })
-          updateParallax()
-        }
-      }
+
     </script>
   </body>
 </html>

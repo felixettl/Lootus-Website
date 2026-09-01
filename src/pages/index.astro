@@ -2,32 +2,27 @@
 import Base from '../layouts/Base.astro'
 import Grain from '../components/Grain.astro'
 import TopBar from '../components/TopBar.astro'
-import Hero from '../components/Hero.astro'
-import Manifesto from '../components/Manifesto.astro'
+import HeroSlider from '../components/HeroSlider.astro'
 import Programm from '../components/Programm.astro'
-import Plate from '../components/Plate.astro'
-import Band from '../components/Band.astro'
 import Residents from '../components/Residents.astro'
 import Footer from '../components/Footer.astro'
 import { fetchEvents } from '../data/calendar'
+import { fetchSlides } from '../data/slides'
 import '../styles/global.css'
 import '../styles/afterglow.css'
 
-const events = await fetchEvents()
+const [events, slides] = await Promise.all([fetchEvents(), fetchSlides()])
 ---
 
 <Base>
   <div class="root">
     <Grain class="pageGrain" opacity={0.035} seed={2} />
     <div class="vignette" aria-hidden="true"></div>
+    <TopBar />
     <div class="shell">
-      <TopBar />
+      <HeroSlider slides={slides} />
       <main>
-        <Hero />
-        <Manifesto />
         <Programm events={events} />
-        <Plate />
-        <Band />
         <Residents />
       </main>
       <Footer />
