@@ -1,6 +1,7 @@
-const API_KEY = import.meta.env.GOOGLE_API_KEY
+import { google } from 'googleapis'
+
 const CALENDAR_ID = import.meta.env.GOOGLE_CALENDAR_ID
-const BASE = 'https://www.googleapis.com/calendar/v3/calendars'
+const SERVICE_ACCOUNT_KEY = import.meta.env.GOOGLE_SERVICE_ACCOUNT_KEY
 
 export interface CalendarEvent {
   id: string
@@ -68,21 +69,25 @@ function toEvent(item: any): CalendarEvent {
 }
 
 export async function fetchEvents(): Promise<CalendarEvent[]> {
-  if (!API_KEY || !CALENDAR_ID) {
-    console.warn('[calendar] GOOGLE_API_KEY or GOOGLE_CALENDAR_ID not set')
+  if (!SERVICE_ACCOUNT_KEY || !CALENDAR_ID) {
+    console.warn('[calendar] GOOGLE_SERVICE_ACCOUNT_KEY or GOOGLE_CALENDAR_ID not set')
     return []
   }
 
-  const url = `${BASE}/${encodeURIComponent(CALENDAR_ID)}/events?key=${encodeURIComponent(API_KEY)}&singleEvents=true&orderBy=startTime&maxResults=50`
-
   try {
-    const res = await fetch(url)
-    if (!res.ok) {
-      console.error('[calendar] API error:', res.status, await res.text())
-      return []
-    }
-    const data = await res.json()
-    return (data.items || []).map(toEvent)
+    const credentials = JSON.parse(SERVICE_ACCOUNT_KEY)
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
+    })
+    const calendar = google.calendar({ version: 'v3', auth })
+    const res = await calendar.events.list({
+      calendarId: CALENDAR_ID,
+      singleEvents: true,
+      orderBy: 'startTime',
+      maxResults: 50,
+    })
+    return (res.data.items || []).map(toEvent)
   } catch (err) {
     console.error('[calendar] fetch failed:', err)
     return []
