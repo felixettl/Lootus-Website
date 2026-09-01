@@ -277,8 +277,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 
 .sliderArrow {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  bottom: 1.5rem;
   z-index: 3;
   width: 2.8rem;
   height: 2.8rem;
@@ -296,8 +295,32 @@ html.js [data-animate="lines"].visible .lineMask > span {
   background: rgba(0, 0, 0, 0.65);
   color: #fff;
 }
-.sliderArrowPrev { left: clamp(1rem, 3vw, 2.5rem); }
-.sliderArrowNext { right: clamp(1rem, 3vw, 2.5rem); }
+.sliderArrowPrev { left: 1.5rem; }
+.sliderArrowNext { right: 1.5rem; }
+
+.slideInstagram {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(200, 200, 200, 0.85);
+  text-decoration: none;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 0.3rem 0.55rem 0.3rem 0.45rem;
+  border-radius: 2rem;
+  transition: color 0.2s, background 0.2s;
+}
+.slideInstagram:hover {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+}
 
 .sliderDots {
   position: absolute;
