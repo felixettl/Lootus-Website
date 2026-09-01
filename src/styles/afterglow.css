@@ -514,7 +514,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .row:hover .rowTitle { transform: none; }
 .row:hover .rowUnderline { transform: scaleX(1); }
 
-/* --- Residents — masthead --- */
+/* --- Residents — DJ cards --- */
 
 .residents {
   padding: clamp(5rem, 14vh, 10rem) 0 clamp(3rem, 8vh, 6rem);
@@ -541,50 +541,254 @@ html.js [data-animate="lines"].visible .lineMask > span {
   letter-spacing: -0.02em;
   color: var(--text);
 }
-.masthead {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
+
+.djTrack {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: clamp(1.5rem, 4vh, 2.5rem) 0.25rem;
+  margin: 0 -0.25rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(251, 169, 25, 0.3) transparent;
 }
-.masthead li {
-  border-bottom: 1px solid rgba(243, 239, 231, 0.1);
+.djTrack::-webkit-scrollbar { height: 3px; }
+.djTrack::-webkit-scrollbar-track { background: transparent; }
+.djTrack::-webkit-scrollbar-thumb {
+  background: rgba(251, 169, 25, 0.3);
+  border-radius: 2px;
 }
-.masthead li:nth-child(odd) { border-right: none; }
-.contributor {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas:
-    'name role'
-    'tag  tag';
-  gap: 0.5rem 1rem;
-  align-items: baseline;
-  padding: clamp(1.6rem, 3.5vw, 2.6rem) 0 clamp(1.6rem, 3.5vw, 2.6rem) 1.4rem;
+
+.djCard {
+  flex: 0 0 clamp(220px, 28vw, 300px);
+  aspect-ratio: 2 / 3;
+  position: relative;
+  overflow: hidden;
+  scroll-snap-align: start;
+  cursor: default;
+  border: 1px solid rgba(243, 239, 231, 0.08);
+  transition: border-color 0.45s var(--ease);
 }
-.masthead li:nth-child(odd) .contributor { padding-left: 1.4rem; }
-.contribName {
-  grid-area: name;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(1.5rem, 3.4vw, 2.5rem);
-  letter-spacing: -0.01em;
+.djCard:hover { border-color: var(--amber); }
+
+.djCardImg {
+  position: absolute;
+  inset: 0;
+  background: var(--ink-deep);
+}
+.djCardImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(1) sepia(0.34) saturate(1.28) hue-rotate(-8deg) contrast(1.04) brightness(0.86);
+  transition: filter 0.65s var(--ease), transform 0.9s var(--ease);
+}
+.djCard:hover .djCardImg img {
+  filter: none;
+  transform: scale(1.04);
+}
+
+.djCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    transparent 38%,
+    rgba(6, 10, 18, 0.6) 68%,
+    rgba(4, 7, 14, 0.92) 100%
+  );
+}
+
+.djCardSocials {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 3;
+  display: flex;
+  gap: 0.4rem;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.djCard:hover .djCardSocials {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.djCardGallery {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 50%;
+  color: rgba(240, 235, 225, 0.85);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease), background 0.25s, color 0.25s;
+}
+.djCard:hover .djCardGallery {
+  opacity: 1;
+  transform: translateY(0);
+}
+.djCardGallery:hover {
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+}
+.djCardSocial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 50%;
+  color: rgba(240, 235, 225, 0.85);
+  transition: background 0.25s, color 0.25s;
+}
+.djCardSocial:hover {
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+}
+
+.djCardInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 0 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.djCardArtist {
+  display: block;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+  letter-spacing: 0.04em;
   color: var(--text);
+  line-height: 1;
+  transform: translateY(0);
+  transition: transform 0.45s var(--ease);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.contribRole {
-  grid-area: role;
-  font-size: 0.64rem;
+.djCard:hover .djCardArtist { transform: translateY(-0.55rem); }
+
+.djCardRealName {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.38s var(--ease) 0.06s, transform 0.38s var(--ease) 0.06s;
+}
+.djCard:hover .djCardRealName {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- DJ Lightbox --- */
+
+.djLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(4, 7, 14, 0.96);
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 3.5rem;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+}
+.djLightbox[hidden] { display: none; }
+
+.djLightboxStage {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 3.5rem 5rem;
+  min-height: 0;
+}
+.djLightboxImg {
+  max-width: 100%;
+  max-height: calc(100vh - 7rem);
+  object-fit: contain;
+  display: block;
+  user-select: none;
+}
+
+.djLightboxClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.2s;
+}
+.djLightboxClose:hover { background: rgba(255, 255, 255, 0.15); }
+
+.djLightboxArrow {
+  grid-row: 1;
+  width: 2.8rem;
+  height: 2.8rem;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  z-index: 5;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.djLightboxArrow:hover { background: rgba(255, 255, 255, 0.15); }
+.djLightboxPrev { grid-column: 1; }
+.djLightboxNext { grid-column: 3; }
+
+.djLightboxCounter {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  text-align: center;
+  font-size: 0.7rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--amber);
-  align-self: center;
-}
-.contribTag {
-  grid-area: tag;
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
   color: var(--muted);
+  padding-bottom: 1.4rem;
 }
 
 /* --- Footer --- */

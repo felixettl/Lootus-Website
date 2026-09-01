@@ -1,5 +1,7 @@
 ---
-import { residents } from '../data/lootus.js'
+import { fetchDJs } from '../data/djs'
+
+const djs = await fetchDJs()
 ---
 
 <section class="residents" id="kollektiv" aria-label="Residents">
@@ -10,18 +12,150 @@ import { residents } from '../data/lootus.js'
         Unsere DJs
       </div>
     </div>
-
   </div>
 
-  <ul class="masthead">
-    {residents.map((r, i) => (
-      <li>
-        <div data-animate="rise" data-scroll style={`--delay:${i * 0.05}s;--y:20px`} class="contributor">
-          <span class="contribName">{r.name}</span>
-          <span class="contribRole">{r.role}</span>
-          <span class="contribTag">{r.tag}</span>
+  <div class="djTrack" role="list">
+    {djs.map((dj, i) => (
+      <article class="djCard" role="listitem" data-animate="rise" data-scroll style={`--delay:${i * 0.07}s;--y:20px`}>
+        <div class="djCardImg">
+          {dj.photoFileId && (
+            <img
+              src={`/api/image/${dj.photoFileId}`}
+              alt={dj.artistName}
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
+          )}
         </div>
-      </li>
+
+        {dj.galleryFolderId && (
+          <button
+            class="djCardGallery"
+            data-folder-id={dj.galleryFolderId}
+            aria-label={`Galerie von ${dj.artistName} öffnen`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </button>
+        )}
+
+        <div class="djCardSocials">
+          {dj.instaUrl && (
+            <a href={dj.instaUrl} target="_blank" rel="noopener noreferrer" class="djCardSocial" aria-label={`${dj.artistName} auf Instagram`}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
+          )}
+          {dj.soundcloudUrl && (
+            <a href={dj.soundcloudUrl} target="_blank" rel="noopener noreferrer" class="djCardSocial" aria-label={`${dj.artistName} auf SoundCloud`}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M11.56 8.87V17h8.76c1.46 0 2.68-1.16 2.68-2.62a2.67 2.67 0 0 0-2.52-2.61C20.42 9.3 18.43 7.33 16 7.33c-1.29 0-2.46.5-3.43 1.54zM0 15.26c0 .96.77 1.74 1.73 1.74.96 0 1.73-.78 1.73-1.74V12.3a1.73 1.73 0 0 0-3.46 0v2.96zm4.68 1.45c0 .53.43.96.95.96.53 0 .96-.43.96-.96V10.5a.96.96 0 0 0-1.91 0v6.21zm2.64.36c0 .53.43.96.96.96s.96-.43.96-.96V9.22a.96.96 0 0 0-1.92 0v7.85zm2.65.17c0 .53.43.96.96.96s.96-.43.96-.96V8.87a.96.96 0 0 0-1.92 0v8.37z"/>
+              </svg>
+            </a>
+          )}
+        </div>
+
+        <div class="djCardInfo">
+          <span class="djCardArtist">{dj.artistName}</span>
+          <span class="djCardRealName">{dj.firstName} {dj.lastName}</span>
+        </div>
+      </article>
     ))}
-  </ul>
+  </div>
 </section>
+
+<!-- Shared lightbox for all DJ galleries -->
+<div class="djLightbox" id="djLightbox" hidden aria-modal="true" role="dialog" aria-label="Galerie">
+  <button class="djLightboxClose" id="djLightboxClose" aria-label="Schließen">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="djLightboxArrow djLightboxPrev" id="djLightboxPrev" aria-label="Vorheriges Bild">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <div class="djLightboxStage">
+    <img class="djLightboxImg" id="djLightboxImg" src="" alt="" draggable="false" />
+  </div>
+  <button class="djLightboxArrow djLightboxNext" id="djLightboxNext" aria-label="Nächstes Bild">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="djLightboxCounter" id="djLightboxCounter"></div>
+</div>
+
+<script>
+  const lb = document.getElementById('djLightbox')!
+  const lbImg = document.getElementById('djLightboxImg') as HTMLImageElement
+  const lbCounter = document.getElementById('djLightboxCounter')!
+
+  let fileIds: string[] = []
+  let current = 0
+  const cache = new Map<string, string[]>()
+
+  function showImage(idx: number) {
+    current = ((idx % fileIds.length) + fileIds.length) % fileIds.length
+    lbImg.src = `/api/image/${fileIds[current]}`
+    lbCounter.textContent = `${current + 1} / ${fileIds.length}`
+    // hide arrows when only one image
+    const arrows = lb.querySelectorAll<HTMLElement>('.djLightboxArrow')
+    arrows.forEach(a => { a.style.display = fileIds.length <= 1 ? 'none' : '' })
+  }
+
+  function openLightbox(ids: string[]) {
+    fileIds = ids
+    lb.removeAttribute('hidden')
+    document.body.style.overflow = 'hidden'
+    showImage(0)
+  }
+
+  function closeLightbox() {
+    lb.setAttribute('hidden', '')
+    document.body.style.overflow = ''
+    lbImg.src = ''
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.djCardGallery').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const folderId = btn.dataset.folderId
+      if (!folderId) return
+
+      if (cache.has(folderId)) {
+        openLightbox(cache.get(folderId)!)
+        return
+      }
+
+      lb.removeAttribute('hidden')
+      document.body.style.overflow = 'hidden'
+      lbImg.src = ''
+      lbCounter.textContent = 'Lädt …'
+
+      const res = await fetch(`/api/gallery/${folderId}`)
+      const ids: string[] = await res.json()
+      cache.set(folderId, ids)
+
+      if (ids.length === 0) { closeLightbox(); return }
+      openLightbox(ids)
+    })
+  })
+
+  document.getElementById('djLightboxClose')!.addEventListener('click', closeLightbox)
+  document.getElementById('djLightboxPrev')!.addEventListener('click', () => showImage(current - 1))
+  document.getElementById('djLightboxNext')!.addEventListener('click', () => showImage(current + 1))
+
+  lb.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement
+    if (t === lb || t.classList.contains('djLightboxStage')) closeLightbox()
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (lb.hasAttribute('hidden')) return
+    if (e.key === 'Escape') closeLightbox()
+    if (e.key === 'ArrowLeft') showImage(current - 1)
+    if (e.key === 'ArrowRight') showImage(current + 1)
+  })
+</script>
