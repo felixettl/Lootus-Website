@@ -26,13 +26,13 @@ const { events } = Astro.props
     {events.map((ev, i) => (
       <li>
         <div data-animate="rise" data-scroll style={`--delay:${i * 0.04}s;--y:30px`} class="rowWrap">
-          <a class="row" href={`#${ev.id}`} data-status={ev.status}>
+          <div class="row" id={ev.id} data-status={ev.status}>
             <span class="rowNo">{String(i + 1).padStart(2, '0')}</span>
 
-            {ev.image && (
+            {ev.driveFileId && (
               <span class="rowThumb">
                 <Photo
-                  src={ev.image}
+                  src={`/api/image/${ev.driveFileId}`}
                   alt={`${ev.title} — ${ev.place}`}
                   class="rowThumbImg"
                   position="center"
@@ -48,8 +48,18 @@ const { events } = Astro.props
                 {ev.title}
                 <span class="rowUnderline" aria-hidden="true"></span>
               </span>
-              <span class="rowMeta">
-                {[ev.venue, ev.place, ev.genre].filter(Boolean).join(' · ')}
+              <span class="rowDetails">
+                <span class="rowDetailsInner">
+                  <span class="rowMeta">
+                    {[ev.venue, ev.place, ev.genre].filter(Boolean).join(' · ')}
+                  </span>
+                  {ev.text && <span class="rowText">{ev.text}</span>}
+                  {ev.tickets && (
+                    <a class="rowTickets" href={ev.tickets} target="_blank" rel="noopener noreferrer">
+                      Tickets →
+                    </a>
+                  )}
+                </span>
               </span>
             </span>
 
@@ -59,9 +69,7 @@ const { events } = Astro.props
                 {ev.status === 'upcoming' ? 'kommend' : 'gewesen'}
               </span>
             </span>
-
-            <span class="rowArrow" aria-hidden="true">→</span>
-          </a>
+          </div>
         </div>
       </li>
     ))}

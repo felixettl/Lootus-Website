@@ -14,17 +14,32 @@ export interface CalendarEvent {
   price: string
   lineup: string[]
   genre: string
+  text: string
+  tickets: string
+  driveFileId: string
   status: 'upcoming' | 'past'
-  image: string
 }
 
 function parseDescription(desc = ''): Record<string, string> {
   const meta: Record<string, string> = {}
+  let currentKey: string | null = null
   for (const line of desc.split('\n')) {
-    const match = line.match(/^(\w+):\s*(.+)/)
-    if (match) meta[match[1].toLowerCase()] = match[2].trim()
+    const match = line.match(/^([A-Za-z]\w*):\s*(.*)/)
+    if (match) {
+      currentKey = match[1].toLowerCase()
+      meta[currentKey] = match[2].trim()
+    } else if (currentKey && line.trim()) {
+      meta[currentKey] += '\n' + line.trim()
+    }
   }
   return meta
+}
+
+// Extracts URL from plain text or markdown link: [label](url)
+function extractUrl(value: string): string {
+  const m = value.match(/\(([^)]+)\)/)
+  const url = m ? m[1] : value.trim()
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`
 }
 
 function parseLocation(location = '') {
@@ -63,8 +78,10 @@ function toEvent(item: any): CalendarEvent {
     price: meta.price || '',
     lineup: meta.lineup ? meta.lineup.split(',').map((s) => s.trim()) : [],
     genre: meta.genre || '',
+    text: meta.text || '',
+    tickets: meta.tickets ? extractUrl(meta.tickets) : '',
+    driveFileId: (item.attachments || []).find((a: any) => a.mimeType?.startsWith('image/'))?.fileId || '',
     status: eventDate > now ? 'upcoming' : 'past',
-    image: meta.image || '',
   }
 }
 
