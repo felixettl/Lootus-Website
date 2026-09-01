@@ -2,13 +2,60 @@
 ---
 
 <header class="topbar">
-  <nav class="nav" aria-label="Hauptnavigation">
-    <span class="wordmark">
-      <img src="/img/Logo_TransBG.svg" alt="Lootus Kollektiv" class="mark" width="24" height="24" />
+  <div class="nav">
+    <a href="/" class="wordmark" aria-label="Lootus Kollektiv">
+      <img src="/img/Logo_TransBG.svg" alt="" class="mark" width="24" height="24" />
       <span>Lootus</span>
-    </span>
-    <a href="#programm" class="navlink">Programm</a>
-    <a href="#kollektiv" class="navlink">Kollektiv</a>
-    <a href="#kontakt" class="navlink">Kontakt</a>
-  </nav>
+    </a>
+    <button class="burger" id="burgerBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navMenu">
+      <span class="burgerLine"></span>
+      <span class="burgerLine"></span>
+      <span class="burgerLine"></span>
+    </button>
+  </div>
 </header>
+
+<div class="navMenu" id="navMenu" aria-hidden="true">
+  <nav aria-label="Hauptnavigation">
+    <a href="#programm" class="navMenuItem">Programm</a>
+    <a href="#kollektiv" class="navMenuItem">Kollektiv</a>
+    <a href="#kontakt" class="navMenuItem">Kontakt</a>
+  </nav>
+</div>
+
+<script>
+  const btn = document.getElementById('burgerBtn')!
+  const menu = document.getElementById('navMenu')!
+
+  function openMenu() {
+    menu.classList.add('navMenuOpen')
+    btn.classList.add('burgerOpen')
+    btn.setAttribute('aria-expanded', 'true')
+    menu.setAttribute('aria-hidden', 'false')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function closeMenu() {
+    menu.classList.remove('navMenuOpen')
+    btn.classList.remove('burgerOpen')
+    btn.setAttribute('aria-expanded', 'false')
+    menu.setAttribute('aria-hidden', 'true')
+    document.body.style.overflow = ''
+  }
+
+  btn.addEventListener('click', () =>
+    menu.classList.contains('navMenuOpen') ? closeMenu() : openMenu()
+  )
+
+  menu.addEventListener('click', (e) => {
+    if (e.target === menu) closeMenu()
+  })
+
+  menu.querySelectorAll('.navMenuItem').forEach((link) =>
+    link.addEventListener('click', closeMenu)
+  )
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu()
+  })
+</script>

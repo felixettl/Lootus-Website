@@ -162,11 +162,9 @@ html.js [data-animate="lines"].visible .lineMask > span {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 50;
+  z-index: 100;
   padding: 1.2rem var(--gutter);
-  background: linear-gradient(rgba(8, 8, 8, 0.75) 70%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
 }
 
 .nav {
@@ -174,7 +172,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: clamp(1.1rem, 2.4vw, 2.4rem);
+  justify-content: space-between;
+  pointer-events: auto;
 }
 .wordmark {
   display: inline-flex;
@@ -184,36 +183,80 @@ html.js [data-animate="lines"].visible .lineMask > span {
   font-weight: 400;
   font-size: 1.35rem;
   letter-spacing: 0.01em;
-  margin-right: 0.4rem;
+  color: var(--text);
+  text-decoration: none;
 }
 .mark {
   color: var(--amber);
   flex: none;
   transform: translateY(-1px);
 }
-.navlink {
+
+/* Burger button */
+.burger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0.35rem;
+  cursor: pointer;
+  z-index: 110;
   position: relative;
-  font-size: 0.74rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding-bottom: 2px;
-  transition: color 0.5s var(--ease);
 }
-.navlink::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
+.burgerLine {
+  display: block;
   width: 100%;
-  height: 1px;
-  background: var(--amber);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.5s var(--ease);
+  height: 1.5px;
+  background: var(--text);
+  border-radius: 1px;
+  transform-origin: center;
+  transition: transform 0.38s var(--ease), opacity 0.25s var(--ease), width 0.38s var(--ease);
 }
-.navlink:hover { color: var(--text); }
-.navlink:hover::after { transform: scaleX(1); }
+.burgerOpen .burgerLine:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.burgerOpen .burgerLine:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.burgerOpen .burgerLine:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* Full-screen nav menu */
+.navMenu {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 7, 14, 0.82);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease);
+}
+.navMenu.navMenuOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+.navMenu nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.6rem, 4vh, 2.8rem);
+}
+.navMenuItem {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(18px);
+  transition: color 0.3s var(--ease), opacity 0.45s var(--ease), transform 0.45s var(--ease);
+}
+.navMenuOpen .navMenuItem:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.06s; }
+.navMenuOpen .navMenuItem:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.12s; }
+.navMenuOpen .navMenuItem:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.18s; }
+.navMenuItem:hover { color: var(--amber); }
 
 /* --- Hero slider --- */
 
