@@ -1,5 +1,6 @@
 node_modules
 dist
+.vercel
 .env
 credentials.json
 *.json
@@ -7,3 +8,4 @@ credentials.json
 !tsconfig.json
 !astro.config.mjs
 .astro
+.DS_Store
