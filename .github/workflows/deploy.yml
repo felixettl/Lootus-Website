@@ -3,9 +3,6 @@ name: Build & Deploy
 on:
   push:
     branches: [main]
-  schedule:
-    # Trigger Vercel rebuild every 6 hours to refresh Google Calendar data
-    - cron: '0 */6 * * *'
   workflow_dispatch: {}
 
 jobs:
@@ -26,10 +23,3 @@ jobs:
           GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
 
-  refresh:
-    # Trigger a Vercel redeploy on cron and manual runs (push deploys via Vercel GitHub integration)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Trigger Vercel Deploy Hook
-        run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
