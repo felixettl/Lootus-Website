@@ -263,7 +263,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .slider {
   position: relative;
   width: 100%;
-  height: clamp(280px, 50vh, 500px);
+  /* cap height at 2/3 of viewport width so narrow screens don't get a tall slider */
+  height: min(clamp(280px, 50vh, 500px), 66.7vw);
   overflow: hidden;
   background: var(--ink-deep);
   margin-bottom: clamp(2.5rem, 6vh, 5rem);
