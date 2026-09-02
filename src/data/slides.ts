@@ -1,4 +1,5 @@
 import { google } from 'googleapis'
+import { createCache } from '../lib/cache'
 
 const FOLDER_ID = '1vRfFIFLd_ZnT6x749z8prz_Iy7Qf5LFL'
 
@@ -7,7 +8,31 @@ export interface Slide {
   instagram?: { displayName: string; url: string }
 }
 
-export async function fetchSlides(): Promise<Slide[]> {
+// Tracks the Drive "changes" page token so we can cheaply ask "did anything change
+// since last time?" instead of always re-crawling folders/files.
+let changesPageToken: string | null = null
+
+async function driveChangedSinceLastCheck(drive: ReturnType<typeof google.drive>): Promise<boolean> {
+  try {
+    if (!changesPageToken) {
+      const start = await drive.changes.getStartPageToken({})
+      changesPageToken = start.data.startPageToken ?? null
+      return true // no baseline yet, must do a full fetch
+    }
+    const res = await drive.changes.list({
+      pageToken: changesPageToken,
+      pageSize: 1000,
+      fields: 'nextPageToken, newStartPageToken, changes(fileId)',
+    })
+    changesPageToken = res.data.newStartPageToken ?? res.data.nextPageToken ?? changesPageToken
+    return (res.data.changes?.length ?? 0) > 0
+  } catch (err) {
+    console.warn('[drive] change check failed, refetching slides anyway:', err)
+    return true
+  }
+}
+
+async function fetchSlidesFromDrive(previous: Slide[] | undefined): Promise<Slide[]> {
   const key = import.meta.env.GOOGLE_SERVICE_ACCOUNT_KEY
   if (!key) return []
   try {
@@ -17,6 +42,10 @@ export async function fetchSlides(): Promise<Slide[]> {
       scopes: ['https://www.googleapis.com/auth/drive.readonly'],
     })
     const drive = google.drive({ version: 'v3', auth })
+
+    if (previous && !(await driveChangedSinceLastCheck(drive))) {
+      return previous
+    }
 
     const foldersRes = await drive.files.list({
       q: `'${FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
@@ -62,6 +91,9 @@ export async function fetchSlides(): Promise<Slide[]> {
     return slides
   } catch (err) {
     console.error('[drive] slides fetch failed:', err)
-    return []
+    return previous ?? []
   }
 }
+
+export const fetchSlides = createCache<Slide[]>(fetchSlidesFromDrive)
+
