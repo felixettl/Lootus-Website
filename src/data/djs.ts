@@ -11,6 +11,7 @@ export interface DJ {
   soundcloudUrl: string
   photoFileId: string
   galleryFolderId: string
+  genre: string
 }
 
 function extractDriveFileId(url: string): string {
@@ -59,7 +60,7 @@ async function fetchDJsFromSheet(previous: DJ[] | undefined): Promise<DJ[]> {
     const sheets = google.sheets({ version: 'v4', auth })
     const res = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'A2:G',
+      range: 'A2:H',
     })
     return (res.data.values ?? [])
       .filter((row) => row[0])
@@ -76,6 +77,7 @@ async function fetchDJsFromSheet(previous: DJ[] | undefined): Promise<DJ[]> {
           soundcloudUrl: row[4] ?? '',
           galleryFolderId: extractDriveFolderId(row[5] ?? ''),
           photoFileId,
+          genre: row[7] ?? '',
         }
       })
   } catch (err) {

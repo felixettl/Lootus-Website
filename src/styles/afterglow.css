@@ -28,6 +28,13 @@ html.js [data-animate="lines"].visible .lineMask > span {
 @media (prefers-reduced-motion: reduce) {
   html.js [data-animate="rise"] { opacity: 1; transform: none; }
   html.js [data-animate="lines"] .lineMask > span { transform: none; }
+  .mastheadLogo { animation: none; }
+  .logoPetal { animation: none; }
+}
+
+@keyframes logoOpen {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(var(--ox), var(--oy)); }
 }
 
 /* --- Root --- */
@@ -42,10 +49,17 @@ html.js [data-animate="lines"].visible .lineMask > span {
   --text: #f4ede2;
   --muted: #a3927b;
 
-  --serif: 'Fraunces', 'Times New Roman', Georgia, serif;
-  --display: 'Venus Rising', 'Inter Tight', system-ui, sans-serif;
-  --sans: 'Inter Tight', system-ui, -apple-system, sans-serif;
+  --serif: Arial, Helvetica, sans-serif;
+  --display: 'Venus Rising', Arial, sans-serif;
+  --sans: Arial, Helvetica, sans-serif;
+  --narrow: 'Bebas Neue', 'Arial Narrow', Arial, sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* shared sizing for small gray text so labels/captions match across sections */
+  --label-size: 0.72rem;
+  --label-tracking: 0.12em;
+  --caption-size: 0.78rem;
+  --caption-tracking: 0.04em;
 
   --gutter: clamp(1.25rem, 5vw, 6rem);
   --maxw: 1440px;
@@ -179,7 +193,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 400;
   font-size: 1.35rem;
   letter-spacing: 0.01em;
@@ -406,8 +420,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   color: var(--amber);
 }
 .sectionNote {
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
+  font-size: var(--caption-size);
+  letter-spacing: var(--caption-tracking);
   color: var(--muted);
   text-align: right;
 }
@@ -441,8 +455,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   display: none;
   grid-area: no;
   font-family: var(--sans);
-  font-size: 0.74rem;
-  letter-spacing: 0.1em;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
   color: var(--muted);
 }
 .rowThumb {
@@ -466,11 +480,11 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .rowTitle {
   position: relative;
   display: inline-block;
-  font-family: var(--serif);
+  font-family: var(--narrow);
   font-weight: 400;
   font-size: clamp(1.7rem, 4.6vw, 3.5rem);
   line-height: 1.02;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--text);
   transition: transform 0.6s var(--ease), color 0.6s var(--ease);
   will-change: transform;
@@ -501,8 +515,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   display: block;
   margin-top: 0.85rem;
   font-family: var(--sans);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -510,9 +524,10 @@ html.js [data-animate="lines"].visible .lineMask > span {
   display: block;
   margin-top: 0.7rem;
   font-family: var(--sans);
-  font-size: 0.82rem;
+  font-size: var(--caption-size);
+  letter-spacing: var(--caption-tracking);
   line-height: 1.55;
-  color: rgba(244, 237, 226, 0.6);
+  color: var(--muted);
   max-width: 52ch;
 }
 .rowTickets {
@@ -539,7 +554,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   gap: 0.8rem;
 }
 .rowDateNum {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 300;
   font-size: clamp(1.05rem, 1.5vw, 1.5rem);
   letter-spacing: 0.01em;
@@ -548,8 +563,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
 }
 .rowStatus {
   font-family: var(--sans);
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -568,9 +583,54 @@ html.js [data-animate="lines"].visible .lineMask > span {
   grid-template-columns: 1fr;
   gap: clamp(2rem, 5vw, 4rem);
   align-items: start;
-  padding-bottom: clamp(2.4rem, 6vh, 4rem);
+  padding-bottom: clamp(1.6rem, 3.4vh, 2.4rem);
   margin-bottom: clamp(1rem, 3vh, 2rem);
-  border-bottom: 1px solid rgba(243, 239, 231, 0.12);
+}
+.mastheadBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.mastheadLogo {
+  flex: none;
+  width: clamp(44px, 6vw, 64px);
+  height: auto;
+  overflow: visible;
+  --enter: 1;
+  --exit: 0;
+}
+.logoPetal {
+  fill: var(--amber);
+  animation-name: logoOpen;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: clamp(0, calc(var(--enter) - var(--exit)), 1);
+  translate: calc(var(--fx) * (1 - var(--enter)) + var(--ex) * var(--exit))
+             calc(var(--fy) * (1 - var(--enter)) + var(--ey) * var(--exit));
+  rotate: calc(var(--frot) * (1 - var(--enter)) + var(--erot) * var(--exit));
+}
+.logoPetal:nth-child(1) { --ox: -6px; --oy: -9px; --r: -5deg; animation-duration: 4.6s; animation-delay: 0s; --fx: -180px; --fy: -40px; --frot: -50deg; --ex: 200px; --ey: 30px; --erot: 40deg; }
+.logoPetal:nth-child(2) { --ox: 3px; --oy: -11px; --r: 4deg; animation-duration: 3.9s; animation-delay: 0.2s; --fx: -160px; --fy: 60px; --frot: 35deg; --ex: 220px; --ey: -50px; --erot: -30deg; }
+.logoPetal:nth-child(3) { --ox: 9px; --oy: -6px; --r: -4deg; animation-duration: 5s; animation-delay: 0.4s; --fx: -200px; --fy: -20px; --frot: 60deg; --ex: 180px; --ey: 70px; --erot: 55deg; }
+.logoPetal:nth-child(4) { --ox: 10px; --oy: 3px; --r: 5deg; animation-duration: 4.3s; animation-delay: 0.6s; --fx: -140px; --fy: 80px; --frot: -40deg; --ex: 240px; --ey: -20px; --erot: -45deg; }
+.logoPetal:nth-child(5) { --ox: 6px; --oy: 9px; --r: -5deg; animation-duration: 4.8s; animation-delay: 0.8s; --fx: -190px; --fy: 30px; --frot: 45deg; --ex: 210px; --ey: 50px; --erot: 35deg; }
+.logoPetal:nth-child(6) { --ox: -3px; --oy: 11px; --r: 4deg; animation-duration: 4.2s; animation-delay: 1s; --fx: -170px; --fy: -60px; --frot: -55deg; --ex: 230px; --ey: -40px; --erot: -50deg; }
+.logoPetal:nth-child(7) { --ox: -9px; --oy: 6px; --r: -4deg; animation-duration: 4.5s; animation-delay: 1.2s; --fx: -210px; --fy: 50px; --frot: 30deg; --ex: 190px; --ey: 60px; --erot: 60deg; }
+.logoPetal:nth-child(8) { --ox: -10px; --oy: -3px; --r: 5deg; animation-duration: 3.8s; animation-delay: 1.4s; --fx: -150px; --fy: -70px; --frot: -35deg; --ex: 250px; --ey: -60px; --erot: -40deg; }
+.mastheadBrandText {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+.mastheadBrandAccent {
+  color: var(--amber);
 }
 .mastheadIntro {
   display: flex;
@@ -584,6 +644,29 @@ html.js [data-animate="lines"].visible .lineMask > span {
   line-height: 1.02;
   letter-spacing: -0.02em;
   color: var(--text);
+}
+
+.introText {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.3rem;
+  row-gap: 0.3rem;
+  max-width: 580px;
+  font-family: var(--sans);
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  line-height: 1.65;
+  letter-spacing: 0.005em;
+  color: rgba(244, 237, 230, 0.82);
+}
+.introHi {
+  flex: none;
+  font-family: var(--narrow);
+  font-weight: 400;
+  font-size: clamp(3.2rem, 8vw, 4.8rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--amber);
 }
 
 .djTrack {
@@ -739,8 +822,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .djCardRealName {
   display: block;
   font-family: var(--sans);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--muted);
   overflow: hidden;
@@ -751,6 +834,25 @@ html.js [data-animate="lines"].visible .lineMask > span {
   transition: opacity 0.38s var(--ease) 0.06s, transform 0.38s var(--ease) 0.06s;
 }
 .djCard:hover .djCardRealName {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.djCardGenre {
+  display: block;
+  font-family: var(--sans);
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--amber);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.38s var(--ease) 0.1s, transform 0.38s var(--ease) 0.1s;
+}
+.djCard:hover .djCardGenre {
   opacity: 1;
   transform: translateY(0);
 }
@@ -828,8 +930,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   grid-column: 1 / -1;
   grid-row: 2;
   text-align: center;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--muted);
   padding-bottom: 1.4rem;
@@ -856,7 +958,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.7rem;
   font-weight: 400;
 }
@@ -865,8 +967,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   flex: none;
 }
 .footLegal, .footMeta {
-  font-size: 0.76rem;
-  letter-spacing: 0.04em;
+  font-size: var(--caption-size);
+  letter-spacing: var(--caption-tracking);
   color: var(--muted);
 }
 .footMeta { display: flex; flex-direction: column; gap: 0.5rem; justify-self: center; text-align: center; }
@@ -898,8 +1000,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   margin-top: clamp(3rem, 8vh, 5rem);
   padding-top: 1.4rem;
   border-top: 1px solid rgba(243, 239, 231, 0.1);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -928,6 +1030,14 @@ html.js [data-animate="lines"].visible .lineMask > span {
 }
 
 @media (min-width: 901px) {
+  .mastheadHead {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: clamp(3rem, 10vw, 9rem);
+  }
+  .mastheadLogo { width: clamp(64px, 6vw, 88px); }
+  .mastheadBrandText { font-size: clamp(1.4rem, 2vw, 1.9rem); }
+  .mastheadIntro { justify-self: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
