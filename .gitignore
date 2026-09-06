@@ -9,3 +9,4 @@ credentials.json
 !astro.config.mjs
 .astro
 .DS_Store
+.env*
