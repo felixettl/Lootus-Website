@@ -1005,6 +1005,13 @@ html.js [data-animate="lines"].visible .lineMask > span {
   text-transform: uppercase;
   color: var(--muted);
 }
+.footLegalLinks {
+  display: flex;
+  gap: 1rem;
+}
+.footLegalLinks a:hover {
+  color: var(--text);
+}
 
 /* --- Responsive --- */
 

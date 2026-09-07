@@ -1,3 +1,5 @@
+@import '@fontsource/bebas-neue/latin-400.css';
+
 @font-face {
   font-family: 'Venus Rising';
   src: url('/fonts/venus-rising-rg.otf') format('opentype');

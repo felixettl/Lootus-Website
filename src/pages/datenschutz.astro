@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro'
+import TopBar from '../components/TopBar.astro'
+import Footer from '../components/Footer.astro'
+import '../styles/global.css'
+import '../styles/afterglow.css'
+---
+
+<Base title="Datenschutz — Lootus Kollektiv" description="Datenschutzerklärung von Lootus Kollektiv.">
+  <div class="root">
+    <TopBar />
+    <div class="shell">
+      <main class="legal">
+        <h1>Datenschutzerklärung</h1>
+
+        <h2>1. Verantwortlicher</h2>
+        <p>
+          [Vereinsname, z. B. Lootus Kollektiv e.V.]<br />
+          [Straße Hausnummer, PLZ Ort]<br />
+          E-Mail: [kontakt@lootus.de]
+        </p>
+
+        <h2>2. Allgemeines</h2>
+        <p>
+          Diese Website verkauft keine Produkte, betreibt kein Tracking und bindet keine
+          Analyse- oder Werbedienste ein. Es werden keine Cookies zu Analyse- oder
+          Marketingzwecken gesetzt. Alle Schriftarten sind lokal eingebunden (kein Nachladen
+          von Drittanbieter-Servern wie Google Fonts).
+        </p>
+
+        <h2>3. Hosting &amp; Server-Logfiles</h2>
+        <p>
+          Diese Website wird bei Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, USA
+          gehostet. Beim Aufruf der Seite verarbeitet Vercel automatisch technische
+          Zugriffsdaten (u. a. IP-Adresse, Datum/Uhrzeit des Zugriffs, aufgerufene Seite,
+          Browsertyp) in Server-Logfiles. Dies ist technisch notwendig, um die Website
+          fehlerfrei auszuliefern (Art. 6 Abs. 1 lit. f DSGVO, berechtigtes Interesse an
+          Betrieb und Sicherheit der Website). Vercel kann Daten in die USA übertragen; es
+          gelten die Standardvertragsklauseln der EU-Kommission bzw. das EU-US Data Privacy
+          Framework als Garantie.
+        </p>
+
+        <h2>4. Bild- und Programminhalte</h2>
+        <p>
+          Event- und Bildinformationen (Programm, Fotos) werden serverseitig über ein privates
+          Google-Konto eines Vereinsmitglieds abgerufen, das neben privaten Zwecken auch für die
+          Kalender- und Foto-Verwaltung des Vereins genutzt wird. Dabei werden keine Besucherdaten
+          an Google übertragen — es handelt sich um einen reinen Inhalte-Abruf durch den Server,
+          keine Verarbeitung von Nutzerdaten der Website-Besucher.
+        </p>
+
+        <h2>5. Externe Links</h2>
+        <p>
+          Die Website verlinkt auf das Instagram-Profil @lootus.kollektiv. Beim Klick auf
+          diesen Link verlassen Sie unsere Seite; es gilt die Datenschutzerklärung von
+          Instagram/Meta. Es findet keine automatische Einbindung (kein Embed, kein Social
+          Plugin) auf unserer Seite statt.
+        </p>
+
+        <h2>6. Ihre Rechte</h2>
+        <p>
+          Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der
+          Verarbeitung, Datenübertragbarkeit sowie Widerspruch gegen die Verarbeitung Ihrer
+          personenbezogenen Daten (Art. 15–21 DSGVO). Wenden Sie sich dazu an die oben
+          genannte Kontaktadresse. Zudem besteht ein Beschwerderecht bei einer
+          Datenschutz-Aufsichtsbehörde.
+        </p>
+      </main>
+    </div>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .shell {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(6rem, 12vh, 9rem) var(--gutter, 1.5rem) 4rem;
+  }
+  .legal h1 {
+    font-family: var(--display, inherit);
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 2rem;
+  }
+  .legal h2 {
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    margin: 2rem 0 0.5rem;
+    color: var(--amber, inherit);
+  }
+  .legal p {
+    line-height: 1.6;
+    color: var(--text, inherit);
+  }
+  .legal a {
+    text-decoration: underline;
+  }
+</style>
