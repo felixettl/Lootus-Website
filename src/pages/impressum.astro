@@ -15,36 +15,56 @@ import '../styles/afterglow.css'
 
         <h2>Angaben gemäß § 5 DDG</h2>
         <p>
-          [Vereinsname, z. B. Lootus Kollektiv e.V.]<br />
-          [Straße Hausnummer]<br />
-          [PLZ Ort]
+          Lootus Kollektiv e.V.<br />
+          Jungerhalde 44<br />
+          78464 Konstanz<br />
+          Deutschland
         </p>
 
         <h2>Vertreten durch</h2>
-        <p>[Name/n der vertretungsberechtigten Vorstandsmitglieder]</p>
-
-        <h2>Registereintrag</h2>
         <p>
-          Eintragung im Vereinsregister.<br />
-          Registergericht: [Amtsgericht ...]<br />
-          Registernummer: [VR ...]
+          Der Vorstand gemäß § 26 BGB:<br />
+          Sven Schimmelpfennig, 1. Vorsitzender<br />
+          Amy Lee Neher, 2. Vorsitzende
         </p>
 
         <h2>Kontakt</h2>
+        <p>E-Mail: lootuskollektiv@gmail.com</p>
+
+        <h2>Vereinsregister</h2>
         <p>
-          E-Mail: [kontakt@lootus.de]<br />
-          Telefon: [optional]
+          Eingetragen im Vereinsregister.<br />
+          Registergericht: Amtsgericht Freiburg im Breisgau<br />
+          Registernummer: VR 705010
         </p>
 
-        <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
-        <p>[Name, Anschrift wie oben]</p>
-
-        <h2>EU-Streitschlichtung</h2>
+        <h2>Redaktionell verantwortlich</h2>
         <p>
-          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
-          <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.
-          Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer
-          Verbraucherschlichtungsstelle teilzunehmen.
+          Verantwortlich für journalistisch-redaktionelle Inhalte gemäß § 18 Abs. 2 MStV:<br />
+          Amy Lee Neher<br />
+          Sven Schimmelpfennig<br />
+          Jungerhalde 44<br />
+          78464 Konstanz
+        </p>
+
+        <h2>Credits</h2>
+        <p class="credit">
+          <span>Webdesign &amp; Gestaltung: Felix Ettl</span>
+          <a href="https://www.instagram.com/_felix.ettl/" target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label="Felix Ettl auf Instagram">
+            <span class="icon icon-instagram"></span>
+          </a>
+          <a href="https://www.linkedin.com/in/felix-ettl-366697293/" target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label="Felix Ettl auf LinkedIn">
+            <span class="icon icon-linkedin"></span>
+          </a>
+        </p>
+        <p class="credit">
+          <span>Logo: Anton Maier</span>
+        </p>
+        <p class="credit">
+          <span>Fotos: Amy Lee Neher</span>
+          <a href="https://www.instagram.com/amezzlee/" target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label="Amy Lee Neher auf Instagram">
+            <span class="icon icon-instagram"></span>
+          </a>
         </p>
       </main>
     </div>
@@ -54,12 +74,17 @@ import '../styles/afterglow.css'
 
 <style>
   .shell {
-    max-width: 720px;
+    max-width: var(--maxw, 1440px);
     margin: 0 auto;
     padding: clamp(6rem, 12vh, 9rem) var(--gutter, 1.5rem) 4rem;
   }
+  .legal {
+    max-width: 720px;
+    margin: 0 auto;
+  }
   .legal h1 {
-    font-family: var(--display, inherit);
+    font-family: var(--narrow, inherit);
+    letter-spacing: 0.02em;
     font-size: clamp(2rem, 5vw, 3rem);
     margin: 0 0 2rem;
   }
@@ -75,5 +100,43 @@ import '../styles/afterglow.css'
   }
   .legal a {
     text-decoration: underline;
+  }
+  .credit {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.25rem 0;
+  }
+  .iconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    text-decoration: none;
+  }
+  .icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #c7c7c7;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    transition: background-color 0.2s ease;
+  }
+  .icon-instagram {
+    mask-image: url('/icons/instagram.svg');
+    -webkit-mask-image: url('/icons/instagram.svg');
+  }
+  .icon-linkedin {
+    mask-image: url('/icons/linkedin.svg');
+    -webkit-mask-image: url('/icons/linkedin.svg');
+  }
+  .iconBtn:hover .icon {
+    background-color: var(--text, inherit);
   }
 </style>

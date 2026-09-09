@@ -940,7 +940,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 /* --- Footer --- */
 
 .footer {
-  padding-bottom: 2.5rem;
+  padding: 0 16px 2.5rem;
 }
 .footRule {
   height: 1px;

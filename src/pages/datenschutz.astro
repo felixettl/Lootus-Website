@@ -73,9 +73,13 @@ import '../styles/afterglow.css'
 
 <style>
   .shell {
-    max-width: 720px;
+    max-width: var(--maxw, 1440px);
     margin: 0 auto;
     padding: clamp(6rem, 12vh, 9rem) var(--gutter, 1.5rem) 4rem;
+  }
+  .legal {
+    max-width: 720px;
+    margin: 0 auto;
   }
   .legal h1 {
     font-family: var(--display, inherit);
