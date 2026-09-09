@@ -958,7 +958,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 /* --- Footer --- */
 
 .footer {
-  padding-bottom: 2.5rem;
+  padding: 0 16px 2.5rem;
 }
 .footRule {
   height: 1px;
@@ -1022,6 +1022,13 @@ html.js [data-animate="lines"].visible .lineMask > span {
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--muted);
+}
+.footLegalLinks {
+  display: flex;
+  gap: 1rem;
+}
+.footLegalLinks a:hover {
+  color: var(--text);
 }
 
 /* --- Responsive --- */

@@ -1,4 +1,6 @@
 ---
+import { brand } from '../data/lootus.js'
+
 interface Props {
   title?: string
   description?: string
@@ -7,6 +9,26 @@ const {
   title = 'Lootus Kollektiv',
   description = 'Lootus Kollektiv — Techno aus Konstanz am Bodensee. Progressive · Peaktime · Acid.',
 } = Astro.props
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const ogImageURL = new URL('/img/Logo_BlackBG.png', Astro.site)
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'MusicGroup',
+  name: brand.name,
+  alternateName: brand.short,
+  url: 'https://lootus.de',
+  logo: new URL('/img/Logo_TransBG.svg', Astro.site).toString(),
+  foundingDate: String(brand.founded),
+  genre: brand.sound,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: brand.city,
+    addressCountry: 'DE',
+  },
+  sameAs: ['https://www.instagram.com/lootus.kollektiv/'],
+}
 ---
 
 <!doctype html>
@@ -16,7 +38,27 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
     <link rel="icon" href="/img/Logo_TransBG.svg" type="image/svg+xml" />
+    <link rel="icon" href="/img/Logo_BlackBG.png" type="image/png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/img/Logo_BlackBG.png" />
+    <meta name="theme-color" content="#000000" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={brand.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content="de_DE" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
     <script is:inline>document.documentElement.classList.add('js')</script>
   </head>
   <body>

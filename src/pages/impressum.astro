@@ -1,0 +1,142 @@
+---
+import Base from '../layouts/Base.astro'
+import TopBar from '../components/TopBar.astro'
+import Footer from '../components/Footer.astro'
+import '../styles/global.css'
+import '../styles/afterglow.css'
+---
+
+<Base title="Impressum — Lootus Kollektiv" description="Impressum von Lootus Kollektiv.">
+  <div class="root">
+    <TopBar />
+    <div class="shell">
+      <main class="legal">
+        <h1>Impressum</h1>
+
+        <h2>Angaben gemäß § 5 DDG</h2>
+        <p>
+          Lootus Kollektiv e.V.<br />
+          Jungerhalde 44<br />
+          78464 Konstanz<br />
+          Deutschland
+        </p>
+
+        <h2>Vertreten durch</h2>
+        <p>
+          Der Vorstand gemäß § 26 BGB:<br />
+          Sven Schimmelpfennig, 1. Vorsitzender<br />
+          Amy Lee Neher, 2. Vorsitzende
+        </p>
+
+        <h2>Kontakt</h2>
+        <p>E-Mail: lootuskollektiv@gmail.com</p>
+
+        <h2>Vereinsregister</h2>
+        <p>
+          Eingetragen im Vereinsregister.<br />
+          Registergericht: Amtsgericht Freiburg im Breisgau<br />
+          Registernummer: VR 705010
+        </p>
+
+        <h2>Redaktionell verantwortlich</h2>
+        <p>
+          Verantwortlich für journalistisch-redaktionelle Inhalte gemäß § 18 Abs. 2 MStV:<br />
+          Amy Lee Neher<br />
+          Sven Schimmelpfennig<br />
+          Jungerhalde 44<br />
+          78464 Konstanz
+        </p>
+
+        <h2>Credits</h2>
+        <p class="credit">
+          <span>Webdesign &amp; Gestaltung: Felix Ettl</span>
+          <a href="https://www.instagram.com/_felix.ettl/" target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label="Felix Ettl auf Instagram">
+            <span class="icon icon-instagram"></span>
+          </a>
+          <a href="https://www.linkedin.com/in/felix-ettl-366697293/" target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label="Felix Ettl auf LinkedIn">
+            <span class="icon icon-linkedin"></span>
+          </a>
+        </p>
+        <p class="credit">
+          <span>Logo: Anton Maier</span>
+        </p>
+        <p class="credit">
+          <span>Fotos: Amy Lee Neher</span>
+          <a href="https://www.instagram.com/amezzlee/" target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label="Amy Lee Neher auf Instagram">
+            <span class="icon icon-instagram"></span>
+          </a>
+        </p>
+      </main>
+    </div>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .shell {
+    max-width: var(--maxw, 1440px);
+    margin: 0 auto;
+    padding: clamp(6rem, 12vh, 9rem) var(--gutter, 1.5rem) 4rem;
+  }
+  .legal {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .legal h1 {
+    font-family: var(--narrow, inherit);
+    letter-spacing: 0.02em;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 2rem;
+  }
+  .legal h2 {
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    margin: 2rem 0 0.5rem;
+    color: var(--amber, inherit);
+  }
+  .legal p {
+    line-height: 1.6;
+    color: var(--text, inherit);
+  }
+  .legal a {
+    text-decoration: underline;
+  }
+  .credit {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.25rem 0;
+  }
+  .iconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    text-decoration: none;
+  }
+  .icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #c7c7c7;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    transition: background-color 0.2s ease;
+  }
+  .icon-instagram {
+    mask-image: url('/icons/instagram.svg');
+    -webkit-mask-image: url('/icons/instagram.svg');
+  }
+  .icon-linkedin {
+    mask-image: url('/icons/linkedin.svg');
+    -webkit-mask-image: url('/icons/linkedin.svg');
+  }
+  .iconBtn:hover .icon {
+    background-color: var(--text, inherit);
+  }
+</style>
