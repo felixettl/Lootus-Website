@@ -224,9 +224,61 @@ html.js [data-animate="lines"].visible .lineMask > span {
   transform: translateY(-1px);
 }
 
-/* Burger button */
+/* Inline nav + centered logo shown in the head bar on desktop */
+.desktopNav,
+.logoOnly {
+  display: none;
+}
+.desktopNav {
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+.desktopNavItem {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+.desktopNavItem:hover {
+  color: var(--amber);
+}
+.logoOnly {
+  align-items: center;
+  color: var(--amber);
+}
+
+@media (min-width: 681px) {
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    justify-content: normal;
+  }
+  .wordmark,
+  .burger {
+    display: none;
+  }
+  .desktopNav {
+    display: flex;
+  }
+  .desktopNavLeft {
+    justify-self: end;
+    margin-right: clamp(1.5rem, 4vw, 3rem);
+  }
+  .desktopNavRight {
+    justify-self: start;
+    margin-left: clamp(1.5rem, 4vw, 3rem);
+  }
+  .logoOnly {
+    display: inline-flex;
+    justify-self: center;
+  }
+}
+
+/* Burger button — mobile only */
 .burger {
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -236,6 +288,11 @@ html.js [data-animate="lines"].visible .lineMask > span {
   cursor: pointer;
   z-index: 110;
   position: relative;
+}
+@media (max-width: 680px) {
+  .burger {
+    display: flex;
+  }
 }
 .burgerLine {
   display: block;
@@ -285,10 +342,14 @@ html.js [data-animate="lines"].visible .lineMask > span {
   transform: translateY(18px);
   transition: color 0.3s var(--ease), opacity 0.45s var(--ease), transform 0.45s var(--ease);
 }
-.navMenuOpen .navMenuItem:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.06s; }
-.navMenuOpen .navMenuItem:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.12s; }
-.navMenuOpen .navMenuItem:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.18s; }
+.navMenuOpen .navMenuItem { opacity: 1; transform: translateY(0); }
 .navMenuItem:hover { color: var(--amber); }
+
+@media (min-width: 681px) {
+  .navMenu {
+    display: none;
+  }
+}
 
 /* --- Hero slider --- */
 
