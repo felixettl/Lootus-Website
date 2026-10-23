@@ -1,6 +1,7 @@
 ---
 import Photo from './Photo.astro'
 import type { CalendarEvent } from '../data/calendar'
+import { imageUrl } from '../lib/signed-urls'
 
 interface Props {
   events: CalendarEvent[]
@@ -29,7 +30,7 @@ const { events } = Astro.props
             {ev.driveFileId && (
               <span class="rowThumb">
                 <Photo
-                  src={`/api/image/${ev.driveFileId}`}
+                  src={imageUrl(ev.driveFileId)}
                   alt={`${ev.title} — ${ev.place}`}
                   class="rowThumbImg"
                   position="center"

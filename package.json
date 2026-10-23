@@ -1,19 +1,27 @@
 {
   "name": "lootus-website",
+  "description": "Website of Lootus Kollektiv e.V. — techno collective from Konstanz",
   "private": true,
   "version": "2.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.5",
     "@astrojs/sitemap": "^3.7.4",
-    "@fontsource/bebas-neue": "^5.3.0",
     "astro": "^5.9.0",
     "googleapis": "^178.0.0",
     "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^5.9.3"
   }
 }

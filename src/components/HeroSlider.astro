@@ -1,5 +1,6 @@
 ---
 import type { Slide } from '../data/slides'
+import { imageUrl } from '../lib/signed-urls'
 interface Props {
   slides: Slide[]
 }
@@ -11,7 +12,7 @@ const { slides } = Astro.props
     <div class:list={['slide', i === 0 && 'slideActive']} data-index={i}>
       <img
         class="slideImg"
-        src={`/api/image/${slide.id}`}
+        src={imageUrl(slide.id)}
         alt=""
         loading={i === 0 ? 'eager' : 'lazy'}
         draggable="false"

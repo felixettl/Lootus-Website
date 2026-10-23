@@ -5,6 +5,7 @@ import { google } from 'googleapis'
 import { createKeyedCache, DEFAULT_TTL_MS } from '../../../lib/cache'
 import { assertDriveId, cacheRoot } from '../../../lib/file-cache'
 import { parseServiceAccountKey } from '../../../lib/google-credentials'
+import { imageUrl, verifySignature } from '../../../lib/signed-urls'
 
 const galleryCacheDir = path.join(cacheRoot, 'galleries')
 
@@ -35,6 +36,7 @@ const getFolderImageIds = createKeyedCache<string, string[]>(async (unsafeFolder
       q: `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`,
       fields: 'files(id)',
       orderBy: 'name',
+      pageSize: 1000,
     })
     const ids = (response.data.files ?? []).flatMap((file) => file.id ? [file.id] : [])
     await mkdir(galleryCacheDir, { recursive: true })
@@ -46,12 +48,14 @@ const getFolderImageIds = createKeyedCache<string, string[]>(async (unsafeFolder
   }
 })
 
-export const GET: APIRoute = async ({ params }) => {
-  if (!params.folderId) return new Response('Not found', { status: 404 })
+export const GET: APIRoute = async ({ params, url }) => {
+  if (!params.folderId || !verifySignature('gallery', params.folderId, url.searchParams.get('s'))) {
+    return Response.json([], { status: 404 })
+  }
 
   try {
     const ids = await getFolderImageIds(params.folderId)
-    return Response.json(ids, {
+    return Response.json(ids.map(imageUrl), {
       headers: { 'Cache-Control': 'public, max-age=900, stale-while-revalidate=86400' },
     })
   } catch (error) {

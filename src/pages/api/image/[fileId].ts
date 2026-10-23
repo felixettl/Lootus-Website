@@ -6,9 +6,11 @@ import sharp from 'sharp'
 import { createKeyedCache, DEFAULT_TTL_MS } from '../../../lib/cache'
 import { assertDriveId, cacheRoot } from '../../../lib/file-cache'
 import { parseServiceAccountKey } from '../../../lib/google-credentials'
+import { verifySignature } from '../../../lib/signed-urls'
 
 const imageCacheDir = path.join(cacheRoot, 'images')
 const MAX_WIDTH = 1600
+const MAX_SOURCE_BYTES = 40 * 1024 * 1024
 
 interface CachedImage {
   data: ArrayBuffer
@@ -51,8 +53,10 @@ const getImage = createKeyedCache<string, CachedImage>(async (unsafeFileId) => {
 
   try {
     const drive = getDrive()
-    const meta = await drive.files.get({ fileId, fields: 'modifiedTime' })
+    const meta = await drive.files.get({ fileId, fields: 'modifiedTime, mimeType, size' })
     const modifiedTime = meta.data.modifiedTime ?? null
+    if (!meta.data.mimeType?.startsWith('image/')) throw new Error(`Not an image: ${fileId}`)
+    if (Number(meta.data.size ?? 0) > MAX_SOURCE_BYTES) throw new Error(`Image too large: ${fileId}`)
 
     if (cached && modifiedTime && modifiedTime === cached.modifiedTime) {
       await writeFile(path.join(imageCacheDir, `${fileId}.json`), JSON.stringify({ modifiedTime }))
@@ -63,7 +67,7 @@ const getImage = createKeyedCache<string, CachedImage>(async (unsafeFileId) => {
       { fileId, alt: 'media' },
       { responseType: 'arraybuffer' },
     )
-    const data = await sharp(Buffer.from(response.data))
+    const data = await sharp(Buffer.from(response.data as unknown as ArrayBuffer))
       .resize({ width: MAX_WIDTH, withoutEnlargement: true })
       .webp()
       .toBuffer()
@@ -78,10 +82,12 @@ const getImage = createKeyedCache<string, CachedImage>(async (unsafeFileId) => {
     if (cached) return cached
     throw error
   }
-})
+}, { maxEntries: 100 })
 
-export const GET: APIRoute = async ({ params }) => {
-  if (!params.fileId) return new Response('Not found', { status: 404 })
+export const GET: APIRoute = async ({ params, url }) => {
+  if (!params.fileId || !verifySignature('image', params.fileId, url.searchParams.get('s'))) {
+    return new Response('Not found', { status: 404 })
+  }
 
   try {
     const image = await getImage(params.fileId)

@@ -1,6 +1,5 @@
-// Simple in-memory, per-instance server cache with stale-while-revalidate refresh.
-// Not shared across serverless instances/cold starts, but avoids redundant upstream
-// calls (Drive/Sheets) for repeated requests hitting the same warm instance.
+// Simple in-memory, per-process server cache with stale-while-revalidate refresh.
+// Avoids redundant upstream calls (Drive/Sheets) for repeated requests.
 
 export const DEFAULT_TTL_MS = 15 * 60 * 1000
 
@@ -39,31 +38,50 @@ export function createCache<T>(
 
 /**
  * Same as createCache but keyed (e.g. by file/folder id), for endpoints fetching
- * per-resource data.
+ * per-resource data. Bounded to `maxEntries` (least recently used entries are evicted)
+ * and concurrent misses for the same key share a single upstream request.
  */
 export function createKeyedCache<K extends string, T>(
   fetcher: (key: K, previous: T | undefined) => Promise<T>,
-  ttlMs = DEFAULT_TTL_MS,
+  { ttlMs = DEFAULT_TTL_MS, maxEntries = 200 }: { ttlMs?: number; maxEntries?: number } = {},
 ) {
-  interface Entry { value: T; updatedAt: number; refreshing: Promise<void> | null }
+  interface Entry { value: T; updatedAt: number; refreshing: boolean }
   const entries = new Map<K, Entry>()
+  const pending = new Map<K, Promise<T>>()
 
-  async function refresh(key: K) {
-    const entry = entries.get(key)
-    const next = await fetcher(key, entry?.value)
-    entries.set(key, { value: next, updatedAt: Date.now(), refreshing: null })
+  function store(key: K, value: T) {
+    entries.delete(key)
+    entries.set(key, { value, updatedAt: Date.now(), refreshing: false })
+    while (entries.size > maxEntries) {
+      entries.delete(entries.keys().next().value as K)
+    }
   }
 
   return async function get(key: K): Promise<T> {
     const entry = entries.get(key)
     if (!entry) {
-      await refresh(key)
-      return entries.get(key)!.value
+      let request = pending.get(key)
+      if (!request) {
+        request = fetcher(key, undefined)
+          .then((value) => { store(key, value); return value })
+          .finally(() => pending.delete(key))
+        pending.set(key, request)
+      }
+      return request
     }
+
+    // Map preserves insertion order, so re-inserting marks the entry as most recently used.
+    entries.delete(key)
+    entries.set(key, entry)
+
     if (Date.now() - entry.updatedAt >= ttlMs && !entry.refreshing) {
-      entry.refreshing = refresh(key).catch((err) =>
-        console.error('[cache] background refresh failed:', err),
-      )
+      entry.refreshing = true
+      fetcher(key, entry.value)
+        .then((value) => store(key, value))
+        .catch((err) => {
+          entry.refreshing = false
+          console.error('[cache] background refresh failed:', err)
+        })
     }
     return entry.value
   }

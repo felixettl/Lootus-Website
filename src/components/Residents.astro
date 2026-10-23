@@ -1,5 +1,6 @@
 ---
 import { fetchDJs } from '../data/djs'
+import { galleryUrl, imageUrl } from '../lib/signed-urls'
 
 const djs = await fetchDJs()
 ---
@@ -39,7 +40,7 @@ const djs = await fetchDJs()
         <div class="djCardImg">
           {dj.photoFileId && (
             <img
-              src={`/api/image/${dj.photoFileId}`}
+              src={imageUrl(dj.photoFileId)}
               alt={dj.artistName}
               loading="lazy"
               decoding="async"
@@ -51,7 +52,7 @@ const djs = await fetchDJs()
         {dj.galleryFolderId && (
           <button
             class="djCardGallery"
-            data-folder-id={dj.galleryFolderId}
+            data-gallery-url={galleryUrl(dj.galleryFolderId)}
             aria-label={`Galerie von ${dj.artistName} öffnen`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -100,7 +101,7 @@ const djs = await fetchDJs()
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
   <div class="djLightboxStage">
-    <img class="djLightboxImg" id="djLightboxImg" src="" alt="" draggable="false" />
+    <img class="djLightboxImg" id="djLightboxImg" alt="" draggable="false" />
   </div>
   <button class="djLightboxArrow djLightboxNext" id="djLightboxNext" aria-label="Nächstes Bild">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
@@ -112,58 +113,82 @@ const djs = await fetchDJs()
   const lb = document.getElementById('djLightbox')!
   const lbImg = document.getElementById('djLightboxImg') as HTMLImageElement
   const lbCounter = document.getElementById('djLightboxCounter')!
+  const lbClose = document.getElementById('djLightboxClose') as HTMLButtonElement
+  const arrows = lb.querySelectorAll<HTMLElement>('.djLightboxArrow')
 
-  let fileIds: string[] = []
+  let urls: string[] = []
   let current = 0
+  // Incremented on every open/close so a slow response can't reopen or overwrite a newer gallery.
+  let activeRequest = 0
+  let returnFocus: HTMLElement | null = null
   const cache = new Map<string, string[]>()
 
   function showImage(idx: number) {
-    current = ((idx % fileIds.length) + fileIds.length) % fileIds.length
-    lbImg.src = `/api/image/${fileIds[current]}`
-    lbCounter.textContent = `${current + 1} / ${fileIds.length}`
-    // hide arrows when only one image
-    const arrows = lb.querySelectorAll<HTMLElement>('.djLightboxArrow')
-    arrows.forEach(a => { a.style.display = fileIds.length <= 1 ? 'none' : '' })
+    if (urls.length === 0) return
+    current = ((idx % urls.length) + urls.length) % urls.length
+    lbImg.src = urls[current]
+    lbCounter.textContent = `${current + 1} / ${urls.length}`
   }
 
-  function openLightbox(ids: string[]) {
-    fileIds = ids
-    lb.removeAttribute('hidden')
-    document.body.style.overflow = 'hidden'
-    showImage(0)
+  function setArrowsVisible(visible: boolean) {
+    arrows.forEach((a) => { a.style.display = visible ? '' : 'none' })
   }
 
   function closeLightbox() {
+    activeRequest++
+    urls = []
     lb.setAttribute('hidden', '')
     document.body.style.overflow = ''
-    lbImg.src = ''
+    lbImg.removeAttribute('src')
+    returnFocus?.focus()
+    returnFocus = null
+  }
+
+  async function loadGallery(url: string): Promise<string[]> {
+    const cached = cache.get(url)
+    if (cached) return cached
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`Gallery request failed: ${res.status}`)
+    const data: unknown = await res.json()
+    const list = Array.isArray(data) ? data.filter((u): u is string => typeof u === 'string') : []
+    cache.set(url, list)
+    return list
   }
 
   document.querySelectorAll<HTMLButtonElement>('.djCardGallery').forEach((btn) => {
     btn.addEventListener('click', async () => {
-      const folderId = btn.dataset.folderId
-      if (!folderId) return
+      const url = btn.dataset.galleryUrl
+      if (!url) return
 
-      if (cache.has(folderId)) {
-        openLightbox(cache.get(folderId)!)
-        return
-      }
-
+      const request = ++activeRequest
+      urls = []
+      lbImg.removeAttribute('src')
+      setArrowsVisible(false)
+      lbCounter.textContent = 'Lädt …'
+      returnFocus = btn
       lb.removeAttribute('hidden')
       document.body.style.overflow = 'hidden'
-      lbImg.src = ''
-      lbCounter.textContent = 'Lädt …'
+      lbClose.focus()
 
-      const res = await fetch(`/api/gallery/${folderId}`)
-      const ids: string[] = await res.json()
-      cache.set(folderId, ids)
-
-      if (ids.length === 0) { closeLightbox(); return }
-      openLightbox(ids)
+      try {
+        const list = await loadGallery(url)
+        if (request !== activeRequest) return
+        if (list.length === 0) {
+          lbCounter.textContent = 'Keine Bilder vorhanden'
+          return
+        }
+        urls = list
+        setArrowsVisible(urls.length > 1)
+        showImage(0)
+      } catch (err) {
+        if (request !== activeRequest) return
+        console.error(err)
+        lbCounter.textContent = 'Galerie konnte nicht geladen werden'
+      }
     })
   })
 
-  document.getElementById('djLightboxClose')!.addEventListener('click', closeLightbox)
+  lbClose.addEventListener('click', closeLightbox)
   document.getElementById('djLightboxPrev')!.addEventListener('click', () => showImage(current - 1))
   document.getElementById('djLightboxNext')!.addEventListener('click', () => showImage(current + 1))
 
@@ -177,6 +202,14 @@ const djs = await fetchDJs()
     if (e.key === 'Escape') closeLightbox()
     if (e.key === 'ArrowLeft') showImage(current - 1)
     if (e.key === 'ArrowRight') showImage(current + 1)
+    if (e.key === 'Tab') {
+      // Keep keyboard focus inside the dialog while it is open.
+      const focusable = [...lb.querySelectorAll<HTMLElement>('button')].filter((b) => b.style.display !== 'none')
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
   })
 </script>
 
