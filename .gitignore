@@ -4,6 +4,7 @@ dist
 credentials.json
 *.json
 !package.json
+!package-lock.json
 !tsconfig.json
 !astro.config.mjs
 .astro

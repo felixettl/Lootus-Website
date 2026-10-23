@@ -50,7 +50,7 @@ jobs:
           set sftp:auto-confirm yes
           set net:max-retries 2
           set net:timeout 20
-          mirror --reverse --delete --parallel=4 --verbose dist/ "$SFTP_DEPLOY_PATH"
+          mirror --reverse --delete --parallel=4 --exclude-glob node_modules/ --exclude-glob .env* --verbose dist/ "$SFTP_DEPLOY_PATH"
           bye
           EOF
 
@@ -61,8 +61,11 @@ jobs:
           SFTP_USERNAME: ${{ secrets.HETZNER_SFTP_USERNAME }}
           SFTP_DEPLOY_PATH: ${{ secrets.HETZNER_DEPLOY_PATH }}
         run: |
+          # ssh joins the remote command into one string, so the path is quoted and embedded directly
+          remote_path="$(printf '%q' "${SFTP_DEPLOY_PATH#/}")"
           sshpass -e ssh -p 222 -o StrictHostKeyChecking=accept-new \
             "$SFTP_USERNAME@$SFTP_HOST" \
-            'deploy_path="$1"; cd "$HOME/${deploy_path#/}" && echo 22 > "$HOME/.nodeversion" && npm ci --omit=dev && (pkill -f "[s]erver/entry.mjs" || true)' \
-            -- "$SFTP_DEPLOY_PATH"
+            "cd \"\$HOME\"/$remote_path && echo 22 > \"\$HOME/.nodeversion\" && npm ci --omit=dev && (pkill -f '[s]erver/entry.mjs' || true)"
 
+      - name: Smoke test
+        run: curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors --output /dev/null https://lootus.de/
