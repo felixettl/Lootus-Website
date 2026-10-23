@@ -21,12 +21,14 @@ import '../styles/afterglow.css'
           <a href="https://easyverein.com" target="_blank" rel="noopener noreferrer">easyVerein</a>
           übertragen und laufen nicht über unsere eigenen Server.
         </p>
-        <div class="embedWrap">
-          <iframe
-            src="https://easyverein.com/public/lootus/applicationform/29190?iframe=True"
-            title="Lootus Kollektiv Beitrittsformular"
-            loading="lazy"
-          ></iframe>
+        <div class="embedWrap" id="embedWrap" data-src="https://easyverein.com/public/lootus/applicationform/29190?iframe=True">
+          <div class="embedConsent">
+            <p>
+              Das Formular wird von easyVerein bereitgestellt. Erst wenn du es lädst, wird eine
+              Verbindung zu easyVerein hergestellt und dabei u. a. deine IP-Adresse übertragen.
+            </p>
+            <button type="button" id="embedLoad">Formular laden</button>
+          </div>
         </div>
         <p class="fallback">
           Falls das Formular nicht lädt, kannst du es auch
@@ -41,6 +43,18 @@ import '../styles/afterglow.css'
     <Footer />
   </div>
 </Base>
+
+<script>
+  const wrap = document.getElementById('embedWrap')
+  document.getElementById('embedLoad')?.addEventListener('click', () => {
+    if (!wrap?.dataset.src) return
+    const frame = document.createElement('iframe')
+    frame.src = wrap.dataset.src
+    frame.title = 'Lootus Kollektiv Beitrittsformular'
+    frame.referrerPolicy = 'no-referrer'
+    wrap.replaceChildren(frame)
+  })
+</script>
 
 <style>
   .shell {
@@ -73,7 +87,25 @@ import '../styles/afterglow.css'
     overflow: hidden;
     background: rgba(255, 255, 255, 0.03);
   }
-  .embedWrap iframe {
+  .embedConsent {
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+  .embedConsent p {
+    margin: 0 0 1.25rem;
+    line-height: 1.6;
+    color: var(--text, inherit);
+  }
+  .embedConsent button {
+    font: inherit;
+    cursor: pointer;
+    padding: 0.7rem 1.4rem;
+    border: 1px solid var(--amber, currentColor);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--amber, inherit);
+  }
+  .embedWrap :global(iframe) {
     width: 100%;
     min-height: 800px;
     border: 0;
