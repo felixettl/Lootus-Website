@@ -1,4 +1,5 @@
 import { google } from 'googleapis'
+import { parseServiceAccountKey } from '../lib/google-credentials'
 
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID
 const SERVICE_ACCOUNT_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
@@ -92,7 +93,7 @@ export async function fetchEvents(): Promise<CalendarEvent[]> {
   }
 
   try {
-    const credentials = JSON.parse(SERVICE_ACCOUNT_KEY)
+    const credentials = parseServiceAccountKey(SERVICE_ACCOUNT_KEY)
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/calendar.readonly'],

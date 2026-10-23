@@ -1,5 +1,6 @@
 import { google } from 'googleapis'
 import { createCache } from '../lib/cache'
+import { parseServiceAccountKey } from '../lib/google-credentials'
 
 const SPREADSHEET_ID = '1i9X8W_59FBtgIkzZdVfWT2ZcPB38u_Jywa3nKq_dqfY'
 
@@ -34,7 +35,7 @@ async function fetchDJsFromSheet(previous: DJ[] | undefined): Promise<DJ[]> {
   const key = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
   if (!key) return []
   try {
-    const credentials = JSON.parse(key)
+    const credentials = parseServiceAccountKey(key)
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: [

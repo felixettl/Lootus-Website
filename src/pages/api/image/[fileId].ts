@@ -5,6 +5,7 @@ import { google } from 'googleapis'
 import sharp from 'sharp'
 import { createKeyedCache, DEFAULT_TTL_MS } from '../../../lib/cache'
 import { assertDriveId, cacheRoot } from '../../../lib/file-cache'
+import { parseServiceAccountKey } from '../../../lib/google-credentials'
 
 const imageCacheDir = path.join(cacheRoot, 'images')
 const MAX_WIDTH = 1600
@@ -37,7 +38,7 @@ function getDrive() {
   const key = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
   if (!key) throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY not set')
   const auth = new google.auth.GoogleAuth({
-    credentials: JSON.parse(key),
+    credentials: parseServiceAccountKey(key),
     scopes: ['https://www.googleapis.com/auth/drive.readonly'],
   })
   return google.drive({ version: 'v3', auth })

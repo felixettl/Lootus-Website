@@ -1,5 +1,6 @@
 import { google } from 'googleapis'
 import { createCache } from '../lib/cache'
+import { parseServiceAccountKey } from '../lib/google-credentials'
 
 const FOLDER_ID = '1vRfFIFLd_ZnT6x749z8prz_Iy7Qf5LFL'
 
@@ -36,7 +37,7 @@ async function fetchSlidesFromDrive(previous: Slide[] | undefined): Promise<Slid
   const key = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
   if (!key) return []
   try {
-    const credentials = JSON.parse(key)
+    const credentials = parseServiceAccountKey(key)
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/drive.readonly'],
