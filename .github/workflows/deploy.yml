@@ -58,11 +58,10 @@ jobs:
         env:
           SSHPASS: ${{ secrets.HETZNER_SFTP_PASSWORD }}
           SFTP_HOST: ${{ secrets.HETZNER_SFTP_HOST }}
-          SFTP_PORT: ${{ secrets.HETZNER_SFTP_PORT }}
           SFTP_USERNAME: ${{ secrets.HETZNER_SFTP_USERNAME }}
           SFTP_DEPLOY_PATH: ${{ secrets.HETZNER_DEPLOY_PATH }}
         run: |
-          sshpass -e ssh -p "$SFTP_PORT" -o StrictHostKeyChecking=accept-new \
+          sshpass -e ssh -p 222 -o StrictHostKeyChecking=accept-new \
             "$SFTP_USERNAME@$SFTP_HOST" \
             'deploy_path="$1"; cd "$HOME/${deploy_path#/}" && echo 22 > "$HOME/.nodeversion" && npm ci --omit=dev && (pkill -f "[s]erver/entry.mjs" || true)' \
             -- "$SFTP_DEPLOY_PATH"
