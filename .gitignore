@@ -1,6 +1,5 @@
 node_modules
 dist
-.vercel
 .env
 credentials.json
 *.json
@@ -10,3 +9,6 @@ credentials.json
 .astro
 .DS_Store
 .env*
+!.env.example
+public/media/drive/
+public/data/galleries/

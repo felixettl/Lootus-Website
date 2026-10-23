@@ -1,11 +1,9 @@
 import { defineConfig } from 'astro/config'
-import vercel from '@astrojs/vercel'
 import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
   site: 'https://lootus.de',
-  output: 'server',
-  adapter: vercel(),
+  output: 'static',
   integrations: [sitemap()],
   build: { assets: '_assets' },
   vite: { envDir: '.' },

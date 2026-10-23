@@ -11,7 +11,7 @@ const { slides } = Astro.props
     <div class:list={['slide', i === 0 && 'slideActive']} data-index={i}>
       <img
         class="slideImg"
-        src={`/api/image/${slide.id}`}
+        src={`/media/drive/${slide.id}.webp`}
         alt=""
         loading={i === 0 ? 'eager' : 'lazy'}
         draggable="false"

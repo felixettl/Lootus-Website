@@ -1,49 +1,140 @@
 #!/usr/bin/env node
-// Deletes cached image/gallery blobs so the next request re-fetches fresh data from Drive.
-// Usage:
-//   npm run refresh-images              -> clears everything (images/ + gallery/)
-//   npm run refresh-images -- <fileId>  -> clears only the given Drive file id(s)
-import { list, del } from '@vercel/blob'
+import { mkdir, rm, writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import { google } from 'googleapis'
+import sharp from 'sharp'
 
-const token = process.env.BLOB_READ_WRITE_TOKEN
-if (!token) {
-  console.error('BLOB_READ_WRITE_TOKEN not set (run with `node --env-file=.env.local` or export it first).')
+const SLIDES_FOLDER_ID = '1vRfFIFLd_ZnT6x749z8prz_Iy7Qf5LFL'
+const DJS_SPREADSHEET_ID = '1i9X8W_59FBtgIkzZdVfWT2ZcPB38u_Jywa3nKq_dqfY'
+const IMAGE_DIR = path.join(process.cwd(), 'public/media/drive')
+const GALLERY_DIR = path.join(process.cwd(), 'public/data/galleries')
+
+const serviceAccountKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
+const calendarId = process.env.GOOGLE_CALENDAR_ID
+
+if (!serviceAccountKey || !calendarId) {
+  console.error('GOOGLE_SERVICE_ACCOUNT_KEY and GOOGLE_CALENDAR_ID must be set.')
   process.exit(1)
 }
 
-const fileIds = process.argv.slice(2)
+const credentials = JSON.parse(serviceAccountKey)
+const auth = new google.auth.GoogleAuth({
+  credentials,
+  scopes: [
+    'https://www.googleapis.com/auth/calendar.readonly',
+    'https://www.googleapis.com/auth/drive.readonly',
+    'https://www.googleapis.com/auth/spreadsheets.readonly',
+  ],
+})
+const drive = google.drive({ version: 'v3', auth })
+const calendar = google.calendar({ version: 'v3', auth })
+const sheets = google.sheets({ version: 'v4', auth })
 
-async function listAll(prefix) {
-  const blobs = []
-  let cursor
+function extractDriveFileId(url = '') {
+  return url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1]
+    ?? url.match(/[?&]id=([a-zA-Z0-9_-]+)/)?.[1]
+    ?? ''
+}
+
+function extractDriveFolderId(url = '') {
+  return url.match(/\/folders\/([a-zA-Z0-9_-]+)/)?.[1] ?? ''
+}
+
+async function listFiles(query, orderBy = undefined) {
+  const files = []
+  let pageToken
   do {
-    const res = await list({ token, prefix, cursor })
-    blobs.push(...res.blobs)
-    cursor = res.hasMore ? res.cursor : undefined
-  } while (cursor)
-  return blobs
+    const response = await drive.files.list({
+      q: query,
+      fields: 'nextPageToken, files(id)',
+      orderBy,
+      pageSize: 1000,
+      pageToken,
+    })
+    files.push(...(response.data.files ?? []))
+    pageToken = response.data.nextPageToken ?? undefined
+  } while (pageToken)
+  return files.flatMap((file) => file.id ? [file.id] : [])
+}
+
+async function collectContent() {
+  const subfolderIds = await listFiles(
+    `'${SLIDES_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+    'name',
+  )
+  const slideImageIds = (await Promise.all(subfolderIds.map((folderId) => listFiles(
+    `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`,
+    'name',
+  )))).flat()
+
+  const sheetResponse = await sheets.spreadsheets.values.get({
+    spreadsheetId: DJS_SPREADSHEET_ID,
+    range: 'A2:H',
+  })
+  const rows = sheetResponse.data.values ?? []
+  const residentImageIds = rows.map((row) => extractDriveFileId(row[6] ?? '')).filter(Boolean)
+  const galleryFolderIds = [...new Set(rows.map((row) => extractDriveFolderId(row[5] ?? '')).filter(Boolean))]
+
+  const calendarResponse = await calendar.events.list({
+    calendarId,
+    singleEvents: true,
+    orderBy: 'startTime',
+    maxResults: 50,
+  })
+  const eventImageIds = (calendarResponse.data.items ?? []).flatMap((event) =>
+    (event.attachments ?? [])
+      .filter((attachment) => attachment.mimeType?.startsWith('image/') && attachment.fileId)
+      .map((attachment) => attachment.fileId),
+  )
+
+  const galleryEntries = await Promise.all(galleryFolderIds.map(async (folderId) => [
+    folderId,
+    await listFiles(`'${folderId}' in parents and mimeType contains 'image/' and trashed = false`, 'name'),
+  ]))
+  const galleries = Object.fromEntries(galleryEntries)
+  const galleryImageIds = Object.values(galleries).flat()
+
+  return {
+    galleries,
+    imageIds: [...new Set([...slideImageIds, ...residentImageIds, ...eventImageIds, ...galleryImageIds])],
+  }
+}
+
+async function downloadImage(fileId) {
+  const response = await drive.files.get(
+    { fileId, alt: 'media' },
+    { responseType: 'arraybuffer' },
+  )
+  const image = await sharp(Buffer.from(response.data))
+    .resize({ width: 1600, withoutEnlargement: true })
+    .webp()
+    .toBuffer()
+  await writeFile(path.join(IMAGE_DIR, `${fileId}.webp`), image)
 }
 
 async function main() {
-  let pathnames
-  if (fileIds.length > 0) {
-    pathnames = fileIds.flatMap((id) => [`images/${id}`, `images/${id}.json`])
-  } else {
-    const [images, gallery] = await Promise.all([listAll('images/'), listAll('gallery/')])
-    pathnames = [...images, ...gallery].map((b) => b.pathname)
-  }
+  const { galleries, imageIds } = await collectContent()
 
-  if (pathnames.length === 0) {
-    console.log('Nothing to delete.')
-    return
-  }
+  await Promise.all([
+    rm(IMAGE_DIR, { recursive: true, force: true }),
+    rm(GALLERY_DIR, { recursive: true, force: true }),
+  ])
+  await Promise.all([
+    mkdir(IMAGE_DIR, { recursive: true }),
+    mkdir(GALLERY_DIR, { recursive: true }),
+  ])
 
-  await del(pathnames, { token })
-  console.log(`Deleted ${pathnames.length} blob(s):`)
-  pathnames.forEach((p) => console.log(`  - ${p}`))
+  for (let index = 0; index < imageIds.length; index += 4) {
+    await Promise.all(imageIds.slice(index, index + 4).map(downloadImage))
+  }
+  await Promise.all(Object.entries(galleries).map(([folderId, ids]) =>
+    writeFile(path.join(GALLERY_DIR, `${folderId}.json`), JSON.stringify(ids)),
+  ))
+
+  console.log(`Synced ${imageIds.length} images and ${Object.keys(galleries).length} galleries.`)
 }
 
-main().catch((err) => {
-  console.error(err)
+main().catch((error) => {
+  console.error('[content] sync failed:', error)
   process.exit(1)
 })
