@@ -33,7 +33,7 @@ async function driveChangedSinceLastCheck(drive: ReturnType<typeof google.drive>
 }
 
 async function fetchSlidesFromDrive(previous: Slide[] | undefined): Promise<Slide[]> {
-  const key = import.meta.env.GOOGLE_SERVICE_ACCOUNT_KEY
+  const key = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
   if (!key) return []
   try {
     const credentials = JSON.parse(key)

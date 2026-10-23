@@ -10,5 +10,3 @@ credentials.json
 .DS_Store
 .env*
 !.env.example
-public/media/drive/
-public/data/galleries/

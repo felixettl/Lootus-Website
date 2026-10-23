@@ -29,7 +29,7 @@ const { events } = Astro.props
             {ev.driveFileId && (
               <span class="rowThumb">
                 <Photo
-                  src={`/media/drive/${ev.driveFileId}.webp`}
+                  src={`/api/image/${ev.driveFileId}`}
                   alt={`${ev.title} — ${ev.place}`}
                   class="rowThumbImg"
                   position="center"

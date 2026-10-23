@@ -1,7 +1,7 @@
 import { google } from 'googleapis'
 
-const CALENDAR_ID = import.meta.env.GOOGLE_CALENDAR_ID
-const SERVICE_ACCOUNT_KEY = import.meta.env.GOOGLE_SERVICE_ACCOUNT_KEY
+const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID
+const SERVICE_ACCOUNT_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
 
 export interface CalendarEvent {
   id: string

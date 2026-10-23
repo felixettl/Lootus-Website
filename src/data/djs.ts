@@ -31,7 +31,7 @@ function extractDriveFolderId(url: string): string {
 let lastKnownModifiedTime: string | null = null
 
 async function fetchDJsFromSheet(previous: DJ[] | undefined): Promise<DJ[]> {
-  const key = import.meta.env.GOOGLE_SERVICE_ACCOUNT_KEY
+  const key = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
   if (!key) return []
   try {
     const credentials = JSON.parse(key)

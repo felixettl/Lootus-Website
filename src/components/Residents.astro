@@ -39,7 +39,7 @@ const djs = await fetchDJs()
         <div class="djCardImg">
           {dj.photoFileId && (
             <img
-              src={`/media/drive/${dj.photoFileId}.webp`}
+              src={`/api/image/${dj.photoFileId}`}
               alt={dj.artistName}
               loading="lazy"
               decoding="async"
@@ -119,7 +119,7 @@ const djs = await fetchDJs()
 
   function showImage(idx: number) {
     current = ((idx % fileIds.length) + fileIds.length) % fileIds.length
-    lbImg.src = `/media/drive/${fileIds[current]}.webp`
+    lbImg.src = `/api/image/${fileIds[current]}`
     lbCounter.textContent = `${current + 1} / ${fileIds.length}`
     // hide arrows when only one image
     const arrows = lb.querySelectorAll<HTMLElement>('.djLightboxArrow')
@@ -154,7 +154,7 @@ const djs = await fetchDJs()
       lbImg.src = ''
       lbCounter.textContent = 'Lädt …'
 
-      const res = await fetch(`/data/galleries/${folderId}.json`)
+      const res = await fetch(`/api/gallery/${folderId}`)
       const ids: string[] = await res.json()
       cache.set(folderId, ids)
 
