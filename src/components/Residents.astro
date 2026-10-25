@@ -1,8 +1,9 @@
 ---
 import { fetchDJs } from '../data/djs'
-import { galleryUrl, imageUrl } from '../lib/signed-urls'
+import { fetchIntro } from '../data/site'
+import { imageUrl } from '../lib/sanity'
 
-const djs = await fetchDJs()
+const [djs, intro] = await Promise.all([fetchDJs(), fetchIntro()])
 ---
 
 <section class="residents" id="kollektiv" aria-label="Residents">
@@ -25,11 +26,8 @@ const djs = await fetchDJs()
     </div>
     <div class="mastheadIntro">
       <p class="introText" data-animate="rise" data-scroll>
-        <span class="introHi">Hi.</span>
-        Schön, dass du da bist. Wir sind Lootus aus Konstanz und haben Lust, mit dir zusammen zu
-        elektronischer Musik zu feiern: in einer Runde, in der du dich wohlfühlen kannst, auch wenn du
-        noch niemanden kennst. Dafür stecken wir gemeinsam Zeit, Ideen und viel Herz in unsere Abende.
-        Ob du einfach tanzen möchtest oder selbst eine Idee mitbringst: Wir freuen uns auf dich.
+        <span class="introHi">{intro.hi}</span>
+        {intro.text}
       </p>
     </div>
   </div>
@@ -38,9 +36,9 @@ const djs = await fetchDJs()
     {djs.map((dj, i) => (
       <article class="djCard" role="listitem" data-animate="rise" data-scroll style={`--delay:${i * 0.07}s;--y:20px`}>
         <div class="djCardImg">
-          {dj.photoFileId && (
+          {dj.photo && (
             <img
-              src={imageUrl(dj.photoFileId)}
+              src={imageUrl(dj.photo, 800)}
               alt={dj.artistName}
               loading="lazy"
               decoding="async"
@@ -49,10 +47,10 @@ const djs = await fetchDJs()
           )}
         </div>
 
-        {dj.galleryFolderId && (
+        {dj.gallery.length > 0 && (
           <button
             class="djCardGallery"
-            data-gallery-url={galleryUrl(dj.galleryFolderId)}
+            data-gallery={JSON.stringify(dj.gallery.map((ref) => imageUrl(ref)))}
             aria-label={`Galerie von ${dj.artistName} öffnen`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -118,10 +116,7 @@ const djs = await fetchDJs()
 
   let urls: string[] = []
   let current = 0
-  // Incremented on every open/close so a slow response can't reopen or overwrite a newer gallery.
-  let activeRequest = 0
   let returnFocus: HTMLElement | null = null
-  const cache = new Map<string, string[]>()
 
   function showImage(idx: number) {
     if (urls.length === 0) return
@@ -135,7 +130,6 @@ const djs = await fetchDJs()
   }
 
   function closeLightbox() {
-    activeRequest++
     urls = []
     lb.setAttribute('hidden', '')
     document.body.style.overflow = ''
@@ -144,47 +138,23 @@ const djs = await fetchDJs()
     returnFocus = null
   }
 
-  async function loadGallery(url: string): Promise<string[]> {
-    const cached = cache.get(url)
-    if (cached) return cached
-    const res = await fetch(url)
-    if (!res.ok) throw new Error(`Gallery request failed: ${res.status}`)
-    const data: unknown = await res.json()
-    const list = Array.isArray(data) ? data.filter((u): u is string => typeof u === 'string') : []
-    cache.set(url, list)
-    return list
-  }
-
   document.querySelectorAll<HTMLButtonElement>('.djCardGallery').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const url = btn.dataset.galleryUrl
-      if (!url) return
+    btn.addEventListener('click', () => {
+      let list: string[] = []
+      try {
+        const data: unknown = JSON.parse(btn.dataset.gallery ?? '[]')
+        list = Array.isArray(data) ? data.filter((u): u is string => typeof u === 'string') : []
+      } catch {}
+      if (list.length === 0) return
 
-      const request = ++activeRequest
-      urls = []
-      lbImg.removeAttribute('src')
-      setArrowsVisible(false)
-      lbCounter.textContent = 'Lädt …'
       returnFocus = btn
       lb.removeAttribute('hidden')
       document.body.style.overflow = 'hidden'
       lbClose.focus()
 
-      try {
-        const list = await loadGallery(url)
-        if (request !== activeRequest) return
-        if (list.length === 0) {
-          lbCounter.textContent = 'Keine Bilder vorhanden'
-          return
-        }
-        urls = list
-        setArrowsVisible(urls.length > 1)
-        showImage(0)
-      } catch (err) {
-        if (request !== activeRequest) return
-        console.error(err)
-        lbCounter.textContent = 'Galerie konnte nicht geladen werden'
-      }
+      urls = list
+      setArrowsVisible(urls.length > 1)
+      showImage(0)
     })
   })
 

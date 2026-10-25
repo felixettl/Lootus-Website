@@ -1,8 +1,6 @@
-import { google } from 'googleapis'
-import { parseServiceAccountKey } from '../lib/google-credentials'
+import { createCache } from '../lib/cache'
+import { sanity } from '../lib/sanity'
 
-const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID
-const SERVICE_ACCOUNT_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
 const TIME_ZONE = 'Europe/Berlin'
 const MAX_EVENTS = 10
 
@@ -19,35 +17,8 @@ export interface CalendarEvent {
   genre: string
   text: string
   tickets: string
-  driveFileId: string
+  image: string
   status: 'upcoming' | 'past'
-}
-
-function parseDescription(desc = ''): Record<string, string> {
-  const meta: Record<string, string> = {}
-  let currentKey: string | null = null
-  for (const line of desc.split('\n')) {
-    const match = line.match(/^([A-Za-z]\w*):\s*(.*)/)
-    if (match) {
-      currentKey = match[1].toLowerCase()
-      meta[currentKey] = match[2].trim()
-    } else if (currentKey && line.trim()) {
-      meta[currentKey] += '\n' + line.trim()
-    }
-  }
-  return meta
-}
-
-// Extracts URL from plain text or markdown link: [label](url)
-function extractUrl(value: string): string {
-  const m = value.match(/\(([^)]+)\)/)
-  const url = m ? m[1] : value.trim()
-  return /^https?:\/\//i.test(url) ? url : `https://${url}`
-}
-
-function parseLocation(location = '') {
-  const parts = location.split(',').map((s) => s.trim())
-  return { venue: parts[0] || '', place: parts[1] || '' }
 }
 
 // Calendar-local YYYY-MM-DD for a date, independent of the server's own timezone.
@@ -57,87 +28,61 @@ function berlinDate(date: Date) {
   }).format(date)
 }
 
-// RFC 3339 timestamp for 00:00 today in Berlin, e.g. 2026-10-23T00:00:00+02:00
-function startOfTodayIso(now = new Date()) {
-  const offset = new Intl.DateTimeFormat('en-US', { timeZone: TIME_ZONE, timeZoneName: 'longOffset' })
-    .formatToParts(now)
-    .find((p) => p.type === 'timeZoneName')?.value.replace('GMT', '')
-  return `${berlinDate(now)}T00:00:00${offset || '+00:00'}`
-}
-
-function formatDate(start: string) {
-  // All-day events only carry a date; format it as-is instead of shifting it through UTC.
-  if (/^\d{4}-\d{2}-\d{2}$/.test(start)) {
-    const [y, m, d] = start.split('-')
-    return `${d}.${m}.${y}`
-  }
-  return new Date(start).toLocaleDateString('de-DE', {
-    timeZone: TIME_ZONE, day: '2-digit', month: '2-digit', year: 'numeric',
-  })
-}
-
-function formatTime(startDateTime?: string, endDateTime?: string) {
+function formatTime(startsAt: string, endsAt?: string) {
   const fmt = (iso: string) =>
     new Date(iso).toLocaleTimeString('de-DE', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit' })
-  if (!startDateTime) return ''
-  return endDateTime ? `${fmt(startDateTime)} – ${fmt(endDateTime)}` : fmt(startDateTime)
+  return endsAt ? `${fmt(startsAt)} – ${fmt(endsAt)}` : fmt(startsAt)
 }
 
-function toEvent(item: any): CalendarEvent {
-  const start: string = item.start?.dateTime || item.start?.date || ''
-  const end: string = item.end?.dateTime || item.end?.date || ''
-  const meta = parseDescription(item.description)
-  const loc = parseLocation(item.location)
-  const isAllDay = !item.start?.dateTime
+const QUERY = `*[_type == "event" && dateTime(coalesce(endsAt, startsAt)) >= dateTime($from)]
+  | order(startsAt asc)[0...$limit] {
+  "id": _id,
+  title,
+  startsAt,
+  endsAt,
+  allDay,
+  venue,
+  place,
+  genre,
+  price,
+  lineup,
+  text,
+  tickets,
+  "image": image.asset._ref
+}`
 
+function toEvent(row: any): CalendarEvent {
+  const date = berlinDate(new Date(row.startsAt))
+  const [y, m, d] = date.split('-')
   return {
-    id: item.id,
-    title: item.summary || '',
-    date: isAllDay ? start : berlinDate(new Date(start)),
-    dateLabel: formatDate(start),
-    venue: loc.venue,
-    place: loc.place,
-    time: isAllDay ? '' : formatTime(item.start?.dateTime, item.end?.dateTime),
-    price: meta.price || '',
-    lineup: meta.lineup ? meta.lineup.split(',').map((s) => s.trim()) : [],
-    genre: meta.genre || '',
-    text: meta.text || '',
-    tickets: meta.tickets ? extractUrl(meta.tickets) : '',
-    driveFileId: (item.attachments || []).find((a: any) => a.mimeType?.startsWith('image/'))?.fileId || '',
-    status: new Date(end || start) > new Date() ? 'upcoming' : 'past',
+    id: row.id,
+    title: row.title ?? '',
+    date,
+    dateLabel: `${d}.${m}.${y}`,
+    venue: row.venue ?? '',
+    place: row.place ?? '',
+    time: row.allDay ? '' : formatTime(row.startsAt, row.endsAt),
+    price: row.price ?? '',
+    lineup: row.lineup ?? [],
+    genre: row.genre ?? '',
+    text: row.text ?? '',
+    tickets: row.tickets ?? '',
+    image: row.image ?? '',
+    status: new Date(row.endsAt || row.startsAt) > new Date() ? 'upcoming' : 'past',
   }
 }
 
-export async function fetchEvents(): Promise<CalendarEvent[]> {
-  if (!SERVICE_ACCOUNT_KEY || !CALENDAR_ID) {
-    console.warn('[calendar] GOOGLE_SERVICE_ACCOUNT_KEY or GOOGLE_CALENDAR_ID not set')
-    return []
-  }
-
+export const fetchEvents = createCache<CalendarEvent[]>(async (previous) => {
   try {
-    const credentials = parseServiceAccountKey(SERVICE_ACCOUNT_KEY)
-    const auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
+    // Over-fetch from 36h ago so events running into today are included, then trim by Berlin date.
+    const rows = await sanity.fetch<any[]>(QUERY, {
+      from: new Date(Date.now() - 36 * 3600 * 1000).toISOString(),
+      limit: MAX_EVENTS + 10,
     })
-    const calendar = google.calendar({ version: 'v3', auth })
     const today = berlinDate(new Date())
-    // timeMin filters by end time, so events that started before today but end today are
-    // also returned; over-fetch a little and drop those to keep exactly the next MAX_EVENTS.
-    const res = await calendar.events.list({
-      calendarId: CALENDAR_ID,
-      singleEvents: true,
-      orderBy: 'startTime',
-      timeMin: startOfTodayIso(),
-      timeZone: TIME_ZONE,
-      maxResults: MAX_EVENTS + 10,
-    })
-    return (res.data.items || [])
-      .map(toEvent)
-      .filter((event) => event.date >= today)
-      .slice(0, MAX_EVENTS)
+    return rows.map(toEvent).filter((event) => event.date >= today).slice(0, MAX_EVENTS)
   } catch (err) {
-    console.error('[calendar] fetch failed:', err)
-    return []
+    console.error('[sanity] events fetch failed:', err)
+    return previous ?? []
   }
-}
+})

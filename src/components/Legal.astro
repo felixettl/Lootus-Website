@@ -1,0 +1,125 @@
+---
+import Base from '../layouts/Base.astro'
+import TopBar from './TopBar.astro'
+import Footer from './Footer.astro'
+import type { LegalPage } from '../data/site'
+import '../styles/global.css'
+import '../styles/afterglow.css'
+
+interface Props {
+  page: LegalPage | null
+  fallbackTitle: string
+}
+const { page, fallbackTitle } = Astro.props
+---
+
+<Base title={page?.seoTitle || `${fallbackTitle} — Lootus Kollektiv`} description={page?.seoDescription || undefined}>
+  <div class="root">
+    <TopBar />
+    <div class="shell">
+      <main class="legal">
+        <h1>{page?.title || fallbackTitle}</h1>
+
+        {!page && <p>Dieser Inhalt ist derzeit nicht verfügbar.</p>}
+
+        {page?.sections.map((section) => (
+          <>
+            <h2 id={section.anchor || undefined}>{section.heading}</h2>
+            <Fragment set:html={section.html} />
+          </>
+        ))}
+
+        {page && page.credits.length > 0 && (
+          <>
+            <h2>Credits</h2>
+            {page.credits.map((credit) => (
+              <p class="credit">
+                <span>{credit.text}</span>
+                {credit.instagramUrl && (
+                  <a href={credit.instagramUrl} target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label={`${credit.text} auf Instagram`}>
+                    <span class="icon icon-instagram"></span>
+                  </a>
+                )}
+                {credit.linkedinUrl && (
+                  <a href={credit.linkedinUrl} target="_blank" rel="noopener noreferrer" class="iconBtn" aria-label={`${credit.text} auf LinkedIn`}>
+                    <span class="icon icon-linkedin"></span>
+                  </a>
+                )}
+              </p>
+            ))}
+          </>
+        )}
+      </main>
+    </div>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .shell {
+    max-width: var(--maxw, 1440px);
+    margin: 0 auto;
+    padding: clamp(6rem, 12vh, 9rem) var(--gutter, 1.5rem) 4rem;
+  }
+  .legal {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .legal h1 {
+    font-family: var(--narrow, inherit);
+    letter-spacing: 0.02em;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 2rem;
+  }
+  .legal h2 {
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    margin: 2rem 0 0.5rem;
+    color: var(--amber, inherit);
+  }
+  .legal :global(p) {
+    line-height: 1.6;
+    color: var(--text, inherit);
+  }
+  .legal :global(a) {
+    text-decoration: underline;
+  }
+  .credit {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.25rem 0;
+  }
+  .legal .iconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    text-decoration: none;
+  }
+  .icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #c7c7c7;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    transition: background-color 0.2s ease;
+  }
+  .icon-instagram {
+    mask-image: url('/icons/instagram.svg');
+    -webkit-mask-image: url('/icons/instagram.svg');
+  }
+  .icon-linkedin {
+    mask-image: url('/icons/linkedin.svg');
+    -webkit-mask-image: url('/icons/linkedin.svg');
+  }
+  .iconBtn:hover .icon {
+    background-color: var(--text, inherit);
+  }
+</style>

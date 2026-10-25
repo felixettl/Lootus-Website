@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import nodemailer, { type Transporter } from 'nodemailer'
-import { sign, verifySignature } from './signed-urls'
+import { sign, verifySignature } from './signing'
 
 export const CONTACT_TOPICS = [
   'Mithelfen bei Events',

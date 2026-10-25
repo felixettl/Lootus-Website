@@ -1,5 +1,5 @@
 // Simple in-memory, per-process server cache with stale-while-revalidate refresh.
-// Avoids redundant upstream calls (Drive/Sheets) for repeated requests.
+// Avoids redundant upstream calls (Sanity) for repeated requests.
 
 export const DEFAULT_TTL_MS = 15 * 60 * 1000
 
