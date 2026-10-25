@@ -23,7 +23,7 @@ export default defineConfig({
             S.divider(),
             S.documentTypeListItem('event').title('Events'),
             S.documentTypeListItem('slide').title('Galerie (Slider)'),
-            S.documentTypeListItem('dj').title('Mitglieder'),
+            S.documentTypeListItem('member').title('Mitglieder'),
             S.documentTypeListItem('legalPage').title('Impressum & Datenschutz'),
           ]),
     }),

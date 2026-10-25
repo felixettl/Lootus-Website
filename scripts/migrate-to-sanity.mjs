@@ -1,5 +1,5 @@
-// One-off migration: copies events, slides, members, intro text and legal pages into Sanity.
-// Usage: node scripts/migrate-to-sanity.mjs [events|slides|djs|content|all]
+// One-off migration: copies events, slides, intro text and legal pages into Sanity.
+// Usage: node scripts/migrate-to-sanity.mjs [events|slides|content|all]
 // Needs SANITY_WRITE_TOKEN (Editor) plus the old GOOGLE_* variables in .env. Safe to re-run:
 // documents use fixed ids and assets are de-duplicated by Sanity.
 import { randomUUID } from 'node:crypto'
@@ -8,7 +8,6 @@ import { google } from 'googleapis'
 
 process.loadEnvFile('.env')
 
-const SPREADSHEET_ID = '1i9X8W_59FBtgIkzZdVfWT2ZcPB38u_Jywa3nKq_dqfY'
 const SLIDES_FOLDER_ID = '1vRfFIFLd_ZnT6x749z8prz_Iy7Qf5LFL'
 
 const { SANITY_WRITE_TOKEN, GOOGLE_SERVICE_ACCOUNT_KEY, GOOGLE_CALENDAR_ID } = process.env
@@ -69,10 +68,6 @@ async function listImages(folderId) {
   })
   return (res.data.files ?? []).map((f) => f.id)
 }
-
-const driveFileId = (url = '') =>
-  (url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ?? url.match(/[?&]id=([a-zA-Z0-9_-]+)/))?.[1] ?? ''
-const driveFolderId = (url = '') => url.match(/\/folders\/([a-zA-Z0-9_-]+)/)?.[1] ?? ''
 
 // ---------- Events ----------
 
@@ -166,38 +161,6 @@ async function migrateSlides() {
       })
       console.log('slide:', folder.name, fileId)
     }
-  }
-}
-
-// ---------- Members ----------
-
-async function migrateDJs() {
-  const sheets = google.sheets({ version: 'v4', auth })
-  const res = await sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: 'A2:H' })
-  let order = 0
-  for (const row of (res.data.values ?? []).filter((r) => r[0])) {
-    const folderId = driveFolderId(row[5])
-    const gallery = []
-    if (folderId) {
-      for (const fileId of await listImages(folderId)) {
-        gallery.push({ _key: randomUUID().slice(0, 12), ...(await uploadDriveImage(fileId)) })
-      }
-    }
-    const photoId = driveFileId(row[6])
-    await sanity.createOrReplace({
-      _id: `dj-${row[0].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
-      _type: 'dj',
-      artistName: row[0],
-      firstName: row[1] ?? '',
-      lastName: row[2] ?? '',
-      ...(row[3] && { instagramUrl: row[3] }),
-      ...(row[4] && { soundcloudUrl: row[4] }),
-      genre: row[7] ?? '',
-      ...(photoId && { photo: await uploadDriveImage(photoId) }),
-      gallery,
-      order: order++,
-    })
-    console.log('dj:', row[0])
   }
 }
 
@@ -311,5 +274,4 @@ async function migrateContent() {
 if (wants('content')) await migrateContent()
 if (wants('events')) await migrateEvents()
 if (wants('slides')) await migrateSlides()
-if (wants('djs')) await migrateDJs()
 console.log('fertig')
