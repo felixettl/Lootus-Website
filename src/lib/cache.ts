@@ -3,6 +3,9 @@
 
 export const DEFAULT_TTL_MS = 15 * 60 * 1000
 
+/** Thrown by keyed fetchers when the upstream resource no longer exists; drops the entry. */
+export class GoneError extends Error {}
+
 /**
  * Wraps a fetcher for a single shared value. The fetcher receives the previous value
  * so it can cheaply check upstream for changes and just return `previous` unchanged
@@ -80,7 +83,8 @@ export function createKeyedCache<K extends string, T>(
         .then((value) => store(key, value))
         .catch((err) => {
           entry.refreshing = false
-          console.error('[cache] background refresh failed:', err)
+          if (err instanceof GoneError) entries.delete(key)
+          else console.error('[cache] background refresh failed:', err)
         })
     }
     return entry.value

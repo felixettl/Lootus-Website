@@ -3,12 +3,17 @@ import path from 'node:path'
 import type { APIRoute } from 'astro'
 import { google } from 'googleapis'
 import sharp from 'sharp'
-import { createKeyedCache, DEFAULT_TTL_MS } from '../../../lib/cache'
-import { assertDriveId, cacheRoot } from '../../../lib/file-cache'
+import { createKeyedCache, DEFAULT_TTL_MS, GoneError } from '../../../lib/cache'
+import {
+  assertDriveId,
+  imageCacheDir,
+  isDriveNotFound,
+  removeCached,
+  scheduleCachePrune,
+} from '../../../lib/file-cache'
 import { parseServiceAccountKey } from '../../../lib/google-credentials'
 import { verifySignature } from '../../../lib/signed-urls'
 
-const imageCacheDir = path.join(cacheRoot, 'images')
 const MAX_WIDTH = 1600
 const MAX_SOURCE_BYTES = 40 * 1024 * 1024
 
@@ -79,6 +84,10 @@ const getImage = createKeyedCache<string, CachedImage>(async (unsafeFileId) => {
     ])
     return { data: toArrayBuffer(data), modifiedTime }
   } catch (error) {
+    if (isDriveNotFound(error)) {
+      await removeCached(imageCacheDir, fileId)
+      throw new GoneError(`Image removed from Drive: ${fileId}`)
+    }
     if (cached) return cached
     throw error
   }
@@ -89,6 +98,7 @@ export const GET: APIRoute = async ({ params, url }) => {
     return new Response('Not found', { status: 404 })
   }
 
+  scheduleCachePrune()
   try {
     const image = await getImage(params.fileId)
     return new Response(image.data, {
@@ -98,7 +108,7 @@ export const GET: APIRoute = async ({ params, url }) => {
       },
     })
   } catch (error) {
-    console.error('[image] fetch failed:', error)
+    if (!(error instanceof GoneError)) console.error('[image] fetch failed:', error)
     return new Response('Not found', { status: 404 })
   }
 }

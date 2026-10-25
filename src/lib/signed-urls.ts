@@ -4,7 +4,7 @@ import { createHash, createHmac, timingSafeEqual } from 'node:crypto'
 // serving arbitrary Drive files, every URL we render carries an HMAC of the Drive ID, so the
 // endpoints only answer for IDs the server itself put on a page.
 
-type Kind = 'image' | 'gallery'
+type Kind = 'image' | 'gallery' | 'contact'
 
 let cachedSecret: { source: string; key: Buffer } | null = null
 
@@ -17,7 +17,7 @@ function signingKey(): Buffer | null {
   return cachedSecret.key
 }
 
-function sign(kind: Kind, id: string): string {
+export function sign(kind: Kind, id: string): string {
   const key = signingKey()
   if (!key) return ''
   return createHmac('sha256', key).update(`${kind}:${id}`).digest('base64url').slice(0, 22)

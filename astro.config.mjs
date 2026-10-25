@@ -19,5 +19,8 @@ export default defineConfig({
   adapter: node({ mode: 'standalone' }),
   integrations: [sitemap()],
   build: { assets: '_assets' },
+  // Astro's built-in check compares against an internal URL that becomes "localhost" behind a
+  // reverse proxy, rejecting every real submission. /api/contact verifies the Origin itself.
+  security: { checkOrigin: false },
   vite: { envDir: '.' },
 })

@@ -2,11 +2,25 @@
 import Base from '../layouts/Base.astro'
 import TopBar from '../components/TopBar.astro'
 import Footer from '../components/Footer.astro'
+import { CONTACT_TOPICS, LIMITS, createFormToken } from '../lib/contact'
 import '../styles/global.css'
 import '../styles/afterglow.css'
+
+const MAIL = 'lootuskollektiv@gmail.com'
+
+const MESSAGES: Record<string, { tone: 'ok' | 'error'; text: string }> = {
+  sent: { tone: 'ok', text: 'Danke! Deine Nachricht ist angekommen. Wir melden uns so bald wie möglich.' },
+  invalid: { tone: 'error', text: `Bitte prüfe deine Eingaben: Name, gültige E-Mail-Adresse und eine Nachricht mit mindestens ${LIMITS.minMessage} Zeichen.` },
+  'rate-limited': { tone: 'error', text: 'Du hast gerade schon mehrere Nachrichten geschickt. Bitte versuch es später noch einmal.' },
+  unavailable: { tone: 'error', text: `Das hat leider nicht geklappt. Schreib uns bitte direkt an ${MAIL}.` },
+  failed: { tone: 'error', text: `Das hat leider nicht geklappt. Schreib uns bitte direkt an ${MAIL}.` },
+}
+
+const status = MESSAGES[Astro.url.searchParams.get('status') ?? '']
+const token = createFormToken()
 ---
 
-<Base title="Kontakt — Lootus Kollektiv" description="Kontaktiere Lootus Kollektiv per E-Mail.">
+<Base title="Kontakt — Lootus Kollektiv" description="Kontaktiere Lootus Kollektiv: mithelfen, Mitglied werden, Booking oder einfach Hallo sagen.">
   <div class="root">
     <TopBar />
     <div class="shell">
@@ -14,17 +28,99 @@ import '../styles/afterglow.css'
         <h1>Kontakt</h1>
         <p class="intro">
           Wir suchen immer nach Helfern für kommende Events und freuen uns über Menschen, die dem Verein beitreten
-          möchten. Auch bei sonstigen Fragen sind wir gerne für dich da. Schreib uns dazu
-          gerne eine E-Mail an
-          <a href="mailto:lootuskollektiv@gmail.com">lootuskollektiv@gmail.com</a>
-          oder schreib uns auf
+          möchten. Auch bei sonstigen Fragen sind wir gerne für dich da. Schreib uns über das Formular, per E-Mail an
+          <a href={`mailto:${MAIL}`}>{MAIL}</a>
+          oder auf
           <a href="https://www.instagram.com/lootus.kollektiv/" target="_blank" rel="noopener noreferrer">Instagram</a>.
         </p>
+
+        <form class="form" id="formular" method="post" action="/api/contact" novalidate data-messages={JSON.stringify(MESSAGES)}>
+          <p class:list={['formStatus', status && `formStatus-${status.tone}`]} role="status" aria-live="polite" hidden={!status}>
+            {status?.text}
+          </p>
+
+          <div class="formRow">
+            <label class="field">
+              <span class="fieldLabel">Name</span>
+              <input name="name" type="text" autocomplete="name" required maxlength={LIMITS.name} />
+            </label>
+            <label class="field">
+              <span class="fieldLabel">E-Mail</span>
+              <input name="email" type="email" autocomplete="email" required maxlength={LIMITS.email} />
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="fieldLabel">Anliegen</span>
+            <select name="topic" required>
+              {CONTACT_TOPICS.map((topic) => <option value={topic}>{topic}</option>)}
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="fieldLabel">Nachricht</span>
+            <textarea name="message" rows="7" required minlength={LIMITS.minMessage} maxlength={LIMITS.message}></textarea>
+          </label>
+
+          <div class="hp" aria-hidden="true">
+            <label>Website <input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <input type="hidden" name="token" value={token} />
+
+          <div class="formFoot">
+            <button class="submit" type="submit">Nachricht senden</button>
+            <p class="formNote">
+              Wir nutzen deine Angaben nur, um deine Anfrage zu beantworten. Mehr dazu in der
+              <a href="/datenschutz#kontaktformular">Datenschutzerklärung</a>.
+            </p>
+          </div>
+        </form>
       </main>
     </div>
     <Footer />
   </div>
 </Base>
+
+<script>
+  const form = document.getElementById('formular') as HTMLFormElement | null
+  const statusEl = form?.querySelector<HTMLElement>('.formStatus')
+  const button = form?.querySelector<HTMLButtonElement>('.submit')
+
+  type Message = { tone: 'ok' | 'error'; text: string }
+  const messages: Record<string, Message> = JSON.parse(form?.dataset.messages ?? '{}')
+
+  function show(status: string | undefined) {
+    const message = messages[status ?? ''] ?? messages.failed
+    if (!statusEl || !message) return
+    statusEl.hidden = false
+    statusEl.textContent = message.text
+    statusEl.className = `formStatus formStatus-${message.tone}`
+    statusEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    if (!form.reportValidity() || !button) return
+
+    button.disabled = true
+    button.textContent = 'Wird gesendet …'
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      })
+      const { status } = (await res.json().catch(() => ({}))) as { status?: string }
+      if (status === 'sent') form.reset()
+      show(status)
+    } catch {
+      show('failed')
+    } finally {
+      button.disabled = false
+      button.textContent = 'Nachricht senden'
+    }
+  })
+</script>
 
 <style>
   .shell {
@@ -47,8 +143,133 @@ import '../styles/afterglow.css'
     color: var(--text, inherit);
     margin: 0;
   }
-  .intro a {
+  .intro a,
+  .formNote a {
     color: var(--amber, inherit);
     text-decoration: underline;
+  }
+
+  .form {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 2.75rem;
+    scroll-margin-top: 7rem;
+  }
+  .formRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.25rem;
+  }
+  .field {
+    display: grid;
+    gap: 0.45rem;
+  }
+  .fieldLabel {
+    font-family: var(--narrow);
+    font-size: 1.05rem;
+    letter-spacing: var(--label-tracking, 0.12em);
+    color: var(--muted);
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(244, 237, 226, 0.16);
+    border-radius: 2px;
+    padding: 0.8rem 0.9rem;
+    transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 9rem;
+    line-height: 1.5;
+  }
+  .field select {
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: calc(100% - 1.15rem) 55%, calc(100% - 0.8rem) 55%;
+    background-size: 0.35rem 0.35rem;
+    background-repeat: no-repeat;
+    padding-right: 2.5rem;
+  }
+  .field select option {
+    background: var(--ink);
+  }
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover {
+    border-color: rgba(244, 237, 226, 0.3);
+  }
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--amber);
+    background-color: rgba(251, 169, 25, 0.05);
+  }
+
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .formFoot {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+  }
+  .submit {
+    font-family: var(--narrow);
+    font-size: 1.25rem;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    background: var(--amber);
+    padding: 0.75rem 1.75rem 0.65rem;
+    border-radius: 2px;
+    transition: background-color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+  .submit:hover {
+    background: var(--amber-bright);
+  }
+  .submit:active {
+    transform: translateY(1px);
+  }
+  .submit:focus-visible {
+    outline: 2px solid var(--amber-bright);
+    outline-offset: 3px;
+  }
+  .submit:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .formNote {
+    margin: 0;
+    font-size: var(--caption-size, 0.78rem);
+    letter-spacing: var(--caption-tracking, 0.04em);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .formStatus {
+    margin: 0;
+    padding: 0.9rem 1rem;
+    line-height: 1.5;
+    border-left: 3px solid var(--muted);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .formStatus-ok {
+    border-color: var(--amber);
+  }
+  .formStatus-error {
+    border-color: #e5684a;
   }
 </style>

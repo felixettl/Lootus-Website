@@ -2,12 +2,17 @@ import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import type { APIRoute } from 'astro'
 import { google } from 'googleapis'
-import { createKeyedCache, DEFAULT_TTL_MS } from '../../../lib/cache'
-import { assertDriveId, cacheRoot } from '../../../lib/file-cache'
+import { createKeyedCache, DEFAULT_TTL_MS, GoneError } from '../../../lib/cache'
+import {
+  assertDriveId,
+  galleryCacheDir,
+  isDriveNotFound,
+  removeCached,
+  scheduleCachePrune,
+} from '../../../lib/file-cache'
 import { parseServiceAccountKey } from '../../../lib/google-credentials'
 import { imageUrl, verifySignature } from '../../../lib/signed-urls'
 
-const galleryCacheDir = path.join(cacheRoot, 'galleries')
 
 async function readCachedGallery(folderId: string) {
   const filePath = path.join(galleryCacheDir, `${folderId}.json`)
@@ -43,6 +48,10 @@ const getFolderImageIds = createKeyedCache<string, string[]>(async (unsafeFolder
     await writeFile(path.join(galleryCacheDir, `${folderId}.json`), JSON.stringify(ids))
     return ids
   } catch (error) {
+    if (isDriveNotFound(error)) {
+      await removeCached(galleryCacheDir, folderId)
+      throw new GoneError(`Gallery removed from Drive: ${folderId}`)
+    }
     if (cached) return cached.ids
     throw error
   }
@@ -53,12 +62,14 @@ export const GET: APIRoute = async ({ params, url }) => {
     return Response.json([], { status: 404 })
   }
 
+  scheduleCachePrune()
   try {
     const ids = await getFolderImageIds(params.folderId)
     return Response.json(ids.map(imageUrl), {
       headers: { 'Cache-Control': 'public, max-age=900, stale-while-revalidate=86400' },
     })
   } catch (error) {
+    if (error instanceof GoneError) return Response.json([], { status: 404 })
     console.error('[gallery] folder fetch failed:', error)
     return Response.json([], { status: 500 })
   }
