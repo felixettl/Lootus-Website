@@ -21,8 +21,15 @@ export const legalPage = defineType({
     defineField({ name: 'seoTitle', title: 'Seitentitel (Browser-Tab)', type: 'string' }),
     defineField({ name: 'seoDescription', title: 'Beschreibung (Meta)', type: 'string' }),
     defineField({
+      name: 'html',
+      title: 'HTML-Inhalt',
+      description: 'Gesamter Text als HTML (z. B. <h2>, <p>, <ul>). Wenn befüllt, werden die Abschnitte unten ignoriert.',
+      type: 'text',
+      rows: 30,
+    }),
+    defineField({
       name: 'sections',
-      title: 'Abschnitte',
+      title: 'Abschnitte (nur wenn kein HTML-Inhalt)',
       type: 'array',
       of: [
         defineArrayMember({

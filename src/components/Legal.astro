@@ -22,7 +22,9 @@ const { page, fallbackTitle } = Astro.props
 
         {!page && <p>Dieser Inhalt ist derzeit nicht verfügbar.</p>}
 
-        {page?.sections.map((section) => (
+        {page?.html && <Fragment set:html={page.html} />}
+
+        {!page?.html && page?.sections.map((section) => (
           <>
             <h2 id={section.anchor || undefined}>{section.heading}</h2>
             <Fragment set:html={section.html} />
@@ -71,11 +73,20 @@ const { page, fallbackTitle } = Astro.props
     font-size: clamp(2rem, 5vw, 3rem);
     margin: 0 0 2rem;
   }
-  .legal h2 {
+  .legal :global(h2) {
     font-size: 1.1rem;
     letter-spacing: 0.02em;
     margin: 2rem 0 0.5rem;
     color: var(--amber, inherit);
+  }
+  .legal :global(h3) {
+    font-size: 1rem;
+    margin: 1.5rem 0 0.4rem;
+  }
+  .legal :global(ul),
+  .legal :global(ol) {
+    line-height: 1.6;
+    padding-left: 1.25rem;
   }
   .legal :global(p) {
     line-height: 1.6;
