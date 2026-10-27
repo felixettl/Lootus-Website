@@ -518,7 +518,9 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .rowWrap { display: block; }
 .row {
   display: grid;
-  grid-template-columns: clamp(100px, 32vw, 150px) 1fr;
+  --thumb: clamp(66px, 22vw, 92px);
+  --thumb-open: clamp(120px, 38vw, 170px);
+  grid-template-columns: var(--thumb) 1fr;
   grid-template-areas:
     'thumb main'
     'thumb date';
@@ -529,7 +531,9 @@ html.js [data-animate="lines"].visible .lineMask > span {
   border-bottom: 1px solid rgba(243, 239, 231, 0.12);
   position: relative;
   cursor: default;
+  transition: grid-template-columns 0.55s var(--ease);
 }
+.row.isOpen { grid-template-columns: var(--thumb-open) 1fr; }
 .rowNo {
   display: none;
   grid-area: no;
@@ -551,7 +555,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   inset: 0;
   transition: transform 0.7s var(--ease);
 }
-.row:hover .rowThumbImg .photoImg {
+.row.isOpen .rowThumbImg .photoImg {
   filter: grayscale(1) sepia(0.42) saturate(1.5) hue-rotate(-6deg) contrast(1.05) brightness(1);
   transform: scale(1.06);
 }
@@ -587,7 +591,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .rowDetailsInner {
   overflow: hidden;
 }
-.row:hover .rowDetails {
+.row.isOpen .rowDetails {
   grid-template-rows: 1fr;
 }
 .rowMeta {
@@ -649,8 +653,22 @@ html.js [data-animate="lines"].visible .lineMask > span {
 }
 .row[data-status='upcoming'] .rowStatus { color: var(--amber); }
 
-.row:hover .rowTitle { transform: none; }
-.row:hover .rowUnderline { transform: scaleX(1); }
+.row.isOpen .rowUnderline { transform: scaleX(1); }
+
+@media (hover: hover) {
+  .row:hover { grid-template-columns: var(--thumb-open) 1fr; }
+  .row:hover .rowThumbImg .photoImg {
+    filter: grayscale(1) sepia(0.42) saturate(1.5) hue-rotate(-6deg) contrast(1.05) brightness(1);
+    transform: scale(1.06);
+  }
+  .row:hover .rowDetails { grid-template-rows: 1fr; }
+  .row:hover .rowUnderline { transform: scaleX(1); }
+}
+
+/* Touch devices: rows open on tap. */
+@media (hover: none) {
+  .row { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+}
 
 /* --- Residents — DJ cards --- */
 
@@ -1030,7 +1048,9 @@ html.js [data-animate="lines"].visible .lineMask > span {
 
 @media (min-width: 681px) {
   .row {
-    grid-template-columns: 2.4rem clamp(120px, 13vw, 180px) 1fr auto;
+    --thumb: clamp(74px, 8vw, 106px);
+    --thumb-open: clamp(140px, 15vw, 220px);
+    grid-template-columns: 2.4rem var(--thumb) 1fr auto;
     grid-template-areas: 'no thumb main date';
     column-gap: clamp(1rem, 3vw, 2.4rem);
     row-gap: 0;
@@ -1039,7 +1059,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
   .rowNo { display: block; }
   .rowThumb { aspect-ratio: 5 / 6; }
   .rowDate { flex-direction: column; align-items: flex-end; gap: 0.4rem; }
-  .row:hover .rowTitle { transform: translateX(0.7rem); }
+  .row.isOpen { grid-template-columns: 2.4rem var(--thumb-open) 1fr auto; }
+  .row.isOpen .rowTitle { transform: translateX(0.7rem); }
   .masthead { grid-template-columns: repeat(2, 1fr); }
   .masthead li:nth-child(odd) { border-right: 1px solid rgba(243, 239, 231, 0.1); }
   .masthead li:nth-child(odd) .contributor { padding-left: 0; }
@@ -1047,6 +1068,11 @@ html.js [data-animate="lines"].visible .lineMask > span {
   .footGrid { grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
   .footInsta { justify-self: end; }
   .footBase { flex-direction: row; gap: 1rem; }
+}
+
+@media (min-width: 681px) and (hover: hover) {
+  .row:hover { grid-template-columns: 2.4rem var(--thumb-open) 1fr auto; }
+  .row:hover .rowTitle { transform: translateX(0.7rem); }
 }
 
 @media (min-width: 901px) {
@@ -1061,6 +1087,8 @@ html.js [data-animate="lines"].visible .lineMask > span {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .row:hover .rowTitle { transform: none; }
+  .row:hover .rowTitle,
+  .row.isOpen .rowTitle { transform: none; }
+  .row { transition: none; }
 
 }

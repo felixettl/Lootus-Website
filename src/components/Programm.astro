@@ -73,3 +73,18 @@ const { events } = Astro.props
     ))}
   </ol>
 </section>
+
+<script>
+  // Touch devices have no hover: tapping a row opens it (larger poster + details).
+  if (window.matchMedia('(hover: none)').matches) {
+    const rows = document.querySelectorAll<HTMLElement>('.programm .row')
+    rows.forEach((row) => {
+      row.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a')) return
+        const open = !row.classList.contains('isOpen')
+        rows.forEach((r) => r.classList.remove('isOpen'))
+        row.classList.toggle('isOpen', open)
+      })
+    })
+  }
+</script>
