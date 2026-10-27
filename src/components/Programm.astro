@@ -16,7 +16,7 @@ const { events } = Astro.props
 
   {events.length === 0 && (
     <div data-animate="rise" data-scroll style="--delay:0.12s" class="sectionNote">
-      Aktuell keine Events geplant — stay tuned.
+      Aktuell sind keine Events geplant. Schau bald wieder vorbei.
     </div>
   )}
 
@@ -31,7 +31,7 @@ const { events } = Astro.props
               <span class="rowThumb">
                 <Photo
                   src={imageUrl(ev.image, 800)}
-                  alt={`${ev.title} — ${ev.place}`}
+                  alt={[ev.title, ev.place].filter(Boolean).join(', ')}
                   class="rowThumbImg"
                   position="center"
                   shade="bottom"

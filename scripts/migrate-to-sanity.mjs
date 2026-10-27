@@ -205,7 +205,6 @@ const impressum = {
   _type: 'legalPage',
   slug: 'impressum',
   title: 'Impressum',
-  seoTitle: 'Impressum — Lootus Kollektiv',
   seoDescription: 'Impressum von Lootus Kollektiv.',
   sections: [
     section('Angaben gemäß § 5 DDG', ['Lootus Kollektiv e.V.\nJungerhalde 44\n78464 Konstanz\nDeutschland']),
@@ -228,7 +227,6 @@ const datenschutz = {
   _type: 'legalPage',
   slug: 'datenschutz',
   title: 'Datenschutzerklärung',
-  seoTitle: 'Datenschutz — Lootus Kollektiv',
   seoDescription: 'Datenschutzerklärung von Lootus Kollektiv.',
   sections: [
     section('1. Verantwortlicher', [`Lootus Kollektiv e.V.\nJungerhalde 44\n78464 Konstanz\nE-Mail: ${MAIL}`]),

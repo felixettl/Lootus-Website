@@ -2,16 +2,19 @@
 import { brand } from '../data/lootus.js'
 
 interface Props {
-  title?: string
   description?: string
+  noindex?: boolean
 }
+const title = 'Lootus Kollektiv'
 const {
-  title = 'Lootus Kollektiv',
-  description = 'Lootus Kollektiv — Techno aus Konstanz am Bodensee. Progressive · Peaktime · Acid.',
+  description = 'Wir sind das Lootus Kollektiv, ein Technoverein aus Konstanz am Bodensee. Wir veranstalten Partys mit Progressive, Peaktime und Acid Techno.',
+  noindex = false,
 } = Astro.props
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const canonicalPath = Astro.url.pathname.replace(/\/+$/, '') || '/'
+const canonicalURL = new URL(canonicalPath, Astro.site)
 const ogImageURL = new URL('/img/Logo_BlackBG.png', Astro.site)
+const googleVerification = process.env.GOOGLE_SITE_VERIFICATION
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -19,6 +22,7 @@ const jsonLd = {
   name: brand.name,
   alternateName: brand.short,
   url: 'https://lootuskollektiv.de',
+  description,
   logo: new URL('/img/Logo_TransBG.svg', Astro.site).toString(),
   foundingDate: String(brand.founded),
   genre: brand.sound,
@@ -38,7 +42,8 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalURL} />}
+    {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
     <link rel="preload" href="/fonts/bebas-neue-v16-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/img/Logo_TransBG.svg" type="image/svg+xml" />
     <link rel="icon" href="/img/Logo_BlackBG.png" type="image/png" sizes="512x512" />
@@ -67,7 +72,7 @@ const jsonLd = {
     <script>
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-      // Mount animations — fire immediately
+      // Mount animations fire immediately
       document.querySelectorAll<HTMLElement>('[data-mount]').forEach(el => {
         if (reduce) { el.classList.add('visible'); return }
         requestAnimationFrame(() => el.classList.add('visible'))

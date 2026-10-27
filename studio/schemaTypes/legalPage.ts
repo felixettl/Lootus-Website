@@ -18,7 +18,6 @@ export const legalPage = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({ name: 'title', title: 'Überschrift (H1)', type: 'string', validation: (rule) => rule.required() }),
-    defineField({ name: 'seoTitle', title: 'Seitentitel (Browser-Tab)', type: 'string' }),
     defineField({ name: 'seoDescription', title: 'Beschreibung (Meta)', type: 'string' }),
     defineField({
       name: 'html',

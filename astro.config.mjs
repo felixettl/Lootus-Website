@@ -15,7 +15,8 @@ export default defineConfig({
   site: 'https://lootuskollektiv.de',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
-  integrations: [sitemap()],
+  trailingSlash: 'never',
+  integrations: [sitemap({ filter: (page) => !page.includes('/404') })],
   build: { assets: '_assets' },
   // Astro's built-in check compares against an internal URL that becomes "localhost" behind a
   // reverse proxy, rejecting every real submission. /api/contact verifies the Origin itself.

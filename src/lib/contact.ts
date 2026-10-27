@@ -133,7 +133,7 @@ export async function sendContactMessage(
       sender: from,
       to: process.env.CONTACT_TO,
       replyTo: { name: message.name, address: message.email },
-      subject: `[Kontakt] ${message.topic} – ${message.name}`,
+      subject: `[Kontakt] ${message.topic} von ${message.name}`,
       text: [
         `Name: ${message.name}`,
         `E-Mail: ${message.email}`,

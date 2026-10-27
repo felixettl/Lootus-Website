@@ -13,7 +13,7 @@ interface Props {
 const { page, fallbackTitle } = Astro.props
 ---
 
-<Base title={page?.seoTitle || `${fallbackTitle} — Lootus Kollektiv`} description={page?.seoDescription || undefined}>
+<Base description={page?.seoDescription || undefined}>
   <div class="root">
     <TopBar />
     <div class="shell">

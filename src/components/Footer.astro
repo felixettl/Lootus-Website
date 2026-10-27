@@ -29,8 +29,8 @@ import { brand } from '../data/lootus.js'
     </a>
   </div>
   <div class="footBase">
-    <span>© {brand.founded}–{new Date().getFullYear()} {brand.short}</span>
-    <span>Lootus Kollektiv — Konstanz</span>
+    <span>© {new Date().getFullYear()} {brand.short}{brand.founded < new Date().getFullYear() && `, seit ${brand.founded}`}</span>
+    <span>Lootus Kollektiv aus Konstanz</span>
     <span class="footLegalLinks">
       <a href="/impressum">Impressum</a>
       <a href="/datenschutz">Datenschutz</a>

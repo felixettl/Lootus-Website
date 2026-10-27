@@ -15,7 +15,6 @@ export interface LegalSection {
 
 export interface LegalPage {
   title: string
-  seoTitle: string
   seoDescription: string
   html: string
   sections: LegalSection[]
@@ -54,7 +53,7 @@ function bodyToHtml(body: unknown[] | undefined): string {
 }
 
 const LEGAL_QUERY = `*[_type == "legalPage" && slug == $slug][0]{
-  title, seoTitle, seoDescription, html,
+  title, seoDescription, html,
   sections[]{ heading, anchor, body },
   credits[]{ text, instagramUrl, linkedinUrl }
 }`
@@ -65,7 +64,6 @@ export async function fetchLegalPage(slug: 'impressum' | 'datenschutz'): Promise
     if (!row) return null
     return {
       title: row.title ?? '',
-      seoTitle: row.seoTitle ?? row.title ?? '',
       seoDescription: row.seoDescription ?? '',
       html: row.html ?? '',
       sections: (row.sections ?? []).map((s: any) => ({

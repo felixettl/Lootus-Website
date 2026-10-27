@@ -5,7 +5,7 @@ export const brand = {
   region: 'Bodensee',
   legal: 'Lootus Kollektiv e.V.',
   sound: ['Progressive', 'Peaktime', 'Acid'],
-  founded: 2022,
+  founded: 2026,
   coords: '47.6603° N, 9.1758° E',
 }
 

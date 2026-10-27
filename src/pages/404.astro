@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro'
+import TopBar from '../components/TopBar.astro'
+import Footer from '../components/Footer.astro'
+import '../styles/global.css'
+import '../styles/afterglow.css'
+---
+
+<Base noindex>
+  <div class="root">
+    <TopBar />
+    <div class="shell">
+      <main class="notFound">
+        <h1>Seite nicht gefunden</h1>
+        <p>Diese Seite gibt es leider nicht. <a href="/">Zur Startseite</a></p>
+      </main>
+    </div>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .shell {
+    max-width: var(--maxw, 1440px);
+    margin: 0 auto;
+    padding: clamp(6rem, 12vh, 9rem) var(--gutter, 1.5rem) 4rem;
+  }
+  .notFound {
+    max-width: 720px;
+    margin: 0 auto;
+    min-height: 40vh;
+  }
+  .notFound h1 {
+    font-family: var(--narrow, inherit);
+    letter-spacing: 0.02em;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 1rem;
+  }
+  .notFound a {
+    text-decoration: underline;
+  }
+</style>
