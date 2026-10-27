@@ -32,6 +32,10 @@ const [members, intro] = await Promise.all([fetchMembers(), fetchIntro()])
     </div>
   </div>
 
+  <div class="sectionHead">
+    <h2 data-animate="rise" data-scroll class="sectionKicker">Team</h2>
+  </div>
+
   <div class="djTrack" role="list">
     {members.map((m, i) => (
       <article class="djCard" role="listitem" data-animate="rise" data-scroll style={`--delay:${i * 0.07}s;--y:20px`}>
@@ -75,6 +79,21 @@ const [members, intro] = await Promise.all([fetchMembers(), fetchIntro()])
     ))}
   </div>
 </section>
+
+<script>
+  // Touch devices have no hover: tapping a card reveals its role and bio.
+  if (window.matchMedia('(hover: none)').matches) {
+    const cards = document.querySelectorAll<HTMLElement>('.djCard')
+    cards.forEach((card) => {
+      card.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a')) return
+        const open = !card.classList.contains('isOpen')
+        cards.forEach((c) => c.classList.remove('isOpen'))
+        card.classList.toggle('isOpen', open)
+      })
+    })
+  }
+</script>
 
 <script>
   // Scroll-scrubbed petal assembly: flies in from the left as the logo enters at the

@@ -518,7 +518,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .rowWrap { display: block; }
 .row {
   display: grid;
-  grid-template-columns: clamp(66px, 22vw, 92px) 1fr;
+  grid-template-columns: clamp(100px, 32vw, 150px) 1fr;
   grid-template-areas:
     'thumb main'
     'thumb date';
@@ -777,7 +777,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   border: 1px solid rgba(243, 239, 231, 0.08);
   transition: border-color 0.45s var(--ease);
 }
-.djCard:hover { border-color: var(--amber); }
+.djCard.isOpen { border-color: var(--amber); }
 
 .djCardImg {
   position: absolute;
@@ -789,11 +789,11 @@ html.js [data-animate="lines"].visible .lineMask > span {
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  filter: grayscale(1) sepia(0.34) saturate(1.28) hue-rotate(-8deg) contrast(1.04) brightness(0.86);
+  filter: none;
   transition: filter 0.65s var(--ease), transform 0.9s var(--ease);
 }
-.djCard:hover .djCardImg img {
-  filter: none;
+.djCard.isOpen .djCardImg img {
+  filter: grayscale(1) sepia(0.34) saturate(1.28) hue-rotate(-8deg) contrast(1.04) brightness(0.86);
   transform: scale(1.04);
 }
 
@@ -822,7 +822,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   transform: translateY(-6px);
   transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
 }
-.djCard:hover .djCardSocials {
+.djCard.isOpen .djCardSocials {
   opacity: 1;
   transform: translateY(0);
 }
@@ -870,7 +870,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   transition: transform 0.45s var(--ease);
   overflow: hidden;
 }
-.djCard:hover .djCardArtist { transform: translateY(-0.55rem); }
+.djCard.isOpen .djCardArtist { transform: translateY(-0.55rem); }
 
 .djCardGenre {
   display: block;
@@ -886,7 +886,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   transform: translateY(6px);
   transition: opacity 0.38s var(--ease) 0.06s, transform 0.38s var(--ease) 0.06s;
 }
-.djCard:hover .djCardGenre {
+.djCard.isOpen .djCardGenre {
   opacity: 1;
   transform: translateY(0);
 }
@@ -905,7 +905,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   opacity: 0;
   transition: max-height 0.5s var(--ease), opacity 0.38s var(--ease) 0.1s;
 }
-.djCard:hover .djCardBio {
+.djCard.isOpen .djCardBio {
   max-height: 10rem;
   opacity: 1;
 }
@@ -921,14 +921,33 @@ html.js [data-animate="lines"].visible .lineMask > span {
   opacity: 0;
   transition: opacity 0.45s var(--ease);
 }
-.djCard:hover::before { opacity: 1; }
+.djCard.isOpen::before { opacity: 1; }
 
-/* Touch devices have no hover: show role and bio permanently. */
+@media (hover: hover) {
+  .djCard:hover { border-color: var(--amber); }
+  .djCard:hover .djCardImg img {
+    filter: grayscale(1) sepia(0.34) saturate(1.28) hue-rotate(-8deg) contrast(1.04) brightness(0.86);
+    transform: scale(1.04);
+  }
+  .djCard:hover .djCardSocials { opacity: 1; transform: translateY(0); }
+  .djCard:hover .djCardArtist { transform: translateY(-0.55rem); }
+  .djCard:hover .djCardGenre { opacity: 1; transform: translateY(0); }
+  .djCard:hover .djCardBio { max-height: 10rem; opacity: 1; }
+  .djCard:hover::before { opacity: 1; }
+}
+
+/* Touch devices have no hover: role and bio are revealed on tap; long bios scroll. */
 @media (hover: none) {
-  .djCard::before { opacity: 1; }
-  .djCardSocials { opacity: 1; transform: none; }
-  .djCardGenre { opacity: 1; transform: none; }
-  .djCardBio { max-height: 10rem; opacity: 1; -webkit-line-clamp: 4; }
+  .djCard { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .djCard.isOpen .djCardBio {
+    display: block;
+    -webkit-line-clamp: unset;
+    max-height: 12rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.25rem;
+  }
 }
 
 /* --- Footer --- */
@@ -1011,7 +1030,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 
 @media (min-width: 681px) {
   .row {
-    grid-template-columns: 2.4rem clamp(74px, 8vw, 106px) 1fr auto;
+    grid-template-columns: 2.4rem clamp(120px, 13vw, 180px) 1fr auto;
     grid-template-areas: 'no thumb main date';
     column-gap: clamp(1rem, 3vw, 2.4rem);
     row-gap: 0;
