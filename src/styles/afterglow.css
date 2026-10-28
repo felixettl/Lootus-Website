@@ -953,9 +953,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--amber);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.38s var(--ease) 0.06s, transform 0.38s var(--ease) 0.06s;
@@ -1013,8 +1011,13 @@ html.js [data-animate="lines"].visible .lineMask > span {
 /* Touch devices have no hover: role and bio are revealed on tap; long bios scroll. */
 @media (hover: none) {
   .djCard { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  /* Opened info grows up to the card's middle at most; longer bios scroll inside. */
+  .djCardInfo { max-height: 50%; }
+  .djCardArtist, .djCardGenre { flex: none; }
   .djCard.isOpen .djCardBio {
     display: block;
+    flex: 0 1 auto;
+    min-height: 0;
     -webkit-line-clamp: unset;
     max-height: 12rem;
     overflow-y: auto;
@@ -1036,9 +1039,9 @@ html.js [data-animate="lines"].visible .lineMask > span {
 }
 .footGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.6rem;
-  align-items: start;
+  grid-template-columns: 1fr auto;
+  gap: 1.6rem 1rem;
+  align-items: center;
 }
 .footBrand { display: flex; flex-direction: column; gap: 0.7rem; }
 .footMark {
@@ -1078,6 +1081,13 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .footInsta:hover {
   background: rgba(251, 169, 25, 0.1);
   border-color: var(--amber);
+}
+/* Mobile: icon only, handle text appears from tablet up. */
+.footInstaText { display: none; }
+.footInsta { padding: 0.7em; }
+@media (min-width: 681px) {
+  .footInsta { padding: 0.6em 1.1em 0.6em 0.9em; }
+  .footInstaText { display: inline; }
 }
 .footBase {
   display: flex;
