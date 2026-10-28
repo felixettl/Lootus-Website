@@ -28,7 +28,7 @@ const { events } = Astro.props
             <span class="rowNo">{String(i + 1).padStart(2, '0')}</span>
 
             {ev.image && (
-              <span class="rowThumb">
+              <span class="rowThumb" data-full={imageUrl(ev.image, 1600)} data-alt={ev.title}>
                 <Photo
                   src={imageUrl(ev.image, 800)}
                   alt={[ev.title, ev.place].filter(Boolean).join(', ')}
@@ -72,15 +72,31 @@ const { events } = Astro.props
       </li>
     ))}
   </ol>
+
+  <dialog class="posterDialog" aria-label="Poster">
+    <img class="posterDialogImg" alt="" />
+  </dialog>
 </section>
 
 <script>
   // Touch devices have no hover: tapping a row opens it (larger poster + details).
   if (window.matchMedia('(hover: none)').matches) {
     const rows = document.querySelectorAll<HTMLElement>('.programm .row')
+    const dialog = document.querySelector<HTMLDialogElement>('.posterDialog')!
+    const dialogImg = dialog.querySelector('img')!
+    const mobile = window.matchMedia('(max-width: 680px)')
+    dialog.addEventListener('click', () => dialog.close())
     rows.forEach((row) => {
       row.addEventListener('click', (e) => {
-        if ((e.target as HTMLElement).closest('a')) return
+        const target = e.target as HTMLElement
+        if (target.closest('a')) return
+        const thumb = target.closest<HTMLElement>('.rowThumb')
+        if (thumb && mobile.matches && row.classList.contains('isOpen')) {
+          dialogImg.src = thumb.dataset.full ?? ''
+          dialogImg.alt = thumb.dataset.alt ?? ''
+          dialog.showModal()
+          return
+        }
         const open = !row.classList.contains('isOpen')
         rows.forEach((r) => r.classList.remove('isOpen'))
         row.classList.toggle('isOpen', open)
