@@ -188,15 +188,18 @@ html.js [data-animate="lines"].visible .lineMask > span {
   pointer-events: none;
 }
 
-/* blurred fade-out backdrop only on mobile, where content scrolls directly under the topbar */
+/* mobile: translucent background so content scrolling underneath shows through faintly */
 @media (max-width: 680px) {
   .topbar {
-    padding-bottom: clamp(3rem, 8vh, 5rem);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 78%);
-    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 78%);
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    background: rgba(16, 16, 16, 0.88);
   }
+}
+
+/* Desktop: header scrolls away with the page instead of staying fixed. */
+@media (min-width: 681px) {
+  .topbar { position: absolute; }
 }
 
 .nav {
