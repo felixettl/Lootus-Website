@@ -55,6 +55,16 @@ html.js [data-animate="lines"].visible .lineMask > span {
   --cool: #4a3a22;
   --text: #f4ede2;
   --muted: #a3927b;
+  --on-photo: #f4ede2;
+  --text-soft: rgba(244, 237, 230, 0.82);
+  --line: rgba(243, 239, 231, 0.12);
+  --line-soft: rgba(243, 239, 231, 0.08);
+  --topbar-bg: rgba(16, 16, 16, 0.88);
+  --menu-bg: rgba(4, 7, 14, 0.82);
+  --field-bg: rgba(255, 255, 255, 0.03);
+  --field-border: rgba(244, 237, 226, 0.16);
+  --field-border-hover: rgba(244, 237, 226, 0.3);
+  --icon: #c7c7c7;
 
   --serif: Arial, Helvetica, sans-serif;
   --display: 'Venus Rising', Arial, sans-serif;
@@ -79,6 +89,29 @@ html.js [data-animate="lines"].visible .lineMask > span {
   font-weight: 400;
   overflow-x: hidden;
   isolation: isolate;
+}
+
+@media (prefers-color-scheme: light) {
+  .root {
+    --ink: #ffffff;
+    --ink-deep: #f0f0f0;
+    --amber: #c25f00;
+    --amber-bright: #a04c00;
+    --text: #141414;
+    --muted: #6b6b6b;
+    --text-soft: rgba(20, 20, 20, 0.82);
+    --line: rgba(20, 20, 20, 0.14);
+    --line-soft: rgba(20, 20, 20, 0.1);
+    --topbar-bg: rgba(255, 255, 255, 0.88);
+    --menu-bg: rgba(255, 255, 255, 0.94);
+    --field-bg: rgba(0, 0, 0, 0.03);
+    --field-border: rgba(20, 20, 20, 0.2);
+    --field-border-hover: rgba(20, 20, 20, 0.4);
+    --icon: #6b6b6b;
+  }
+  .vignette {
+    background: radial-gradient(120% 80% at 70% -10%, rgba(251, 169, 25, 0.06), transparent 55%);
+  }
 }
 
 .vignette {
@@ -193,7 +226,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   .topbar {
     padding-top: 0.6rem;
     padding-bottom: 0.6rem;
-    background: rgba(16, 16, 16, 0.88);
+    background: var(--topbar-bg);
   }
 }
 
@@ -318,7 +351,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(4, 7, 14, 0.82);
+  background: var(--menu-bg);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   opacity: 0;
@@ -492,7 +525,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   justify-content: space-between;
   gap: 1.5rem;
   padding-bottom: 2.4rem;
-  border-bottom: 1px solid rgba(243, 239, 231, 0.12);
+  border-bottom: 1px solid var(--line);
   margin-bottom: 0.5rem;
 }
 .sectionKicker {
@@ -530,7 +563,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   column-gap: 1.1rem;
   row-gap: 0.75rem;
   padding: 1.5rem 0;
-  border-bottom: 1px solid rgba(243, 239, 231, 0.12);
+  border-bottom: 1px solid var(--line);
   position: relative;
   cursor: default;
   transition: grid-template-columns 0.55s var(--ease);
@@ -618,7 +651,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--amber);
-  border: 1px solid rgba(251, 169, 25, 0.4);
+  border: 1px solid color-mix(in srgb, var(--amber) 45%, transparent);
   padding: 0.3em 0.75em;
   transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
 }
@@ -720,7 +753,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   --exit: 0;
 }
 .logoPetal {
-  fill: var(--amber);
+  fill: #fba919;
   animation-name: logoOpen;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
@@ -750,7 +783,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   color: var(--text);
 }
 .mastheadBrandAccent {
-  color: var(--amber);
+  color: #fba919;
 }
 .mastheadIntro {
   display: flex;
@@ -777,7 +810,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   font-size: clamp(0.95rem, 1.6vw, 1.05rem);
   line-height: 1.65;
   letter-spacing: 0.005em;
-  color: rgba(244, 237, 230, 0.82);
+  color: var(--text-soft);
 }
 .introHi {
   flex: none;
@@ -815,7 +848,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   overflow: hidden;
   scroll-snap-align: start;
   cursor: default;
-  border: 1px solid rgba(243, 239, 231, 0.08);
+  border: 1px solid var(--line-soft);
   transition: border-color 0.45s var(--ease);
 }
 .djCard.isOpen { border-color: var(--amber); }
@@ -904,7 +937,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   font-family: var(--narrow);
   font-size: clamp(1.3rem, 2.4vw, 1.55rem);
   letter-spacing: 0.04em;
-  color: var(--text);
+  color: var(--on-photo);
   line-height: 1.05;
   text-wrap: balance;
   transform: translateY(0);
@@ -998,7 +1031,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 }
 .footRule {
   height: 1px;
-  background: rgba(243, 239, 231, 0.12);
+  background: var(--line);
   margin-bottom: clamp(2.5rem, 6vh, 4rem);
 }
 .footGrid {
@@ -1035,7 +1068,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--amber);
-  border: 1px solid rgba(251, 169, 25, 0.35);
+  border: 1px solid color-mix(in srgb, var(--amber) 45%, transparent);
   padding: 0.6em 1.1em 0.6em 0.9em;
   border-radius: 2rem;
   justify-self: end;
@@ -1053,7 +1086,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   flex-direction: column;
   margin-top: clamp(3rem, 8vh, 5rem);
   padding-top: 1.4rem;
-  border-top: 1px solid rgba(243, 239, 231, 0.1);
+  border-top: 1px solid var(--line);
   font-size: var(--label-size);
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
@@ -1089,7 +1122,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
     transform: scale(1.06);
   }
   .masthead { grid-template-columns: repeat(2, 1fr); }
-  .masthead li:nth-child(odd) { border-right: 1px solid rgba(243, 239, 231, 0.1); }
+  .masthead li:nth-child(odd) { border-right: 1px solid var(--line); }
   .masthead li:nth-child(odd) .contributor { padding-left: 0; }
   .contributor { padding: clamp(1.6rem, 3.5vw, 2.6rem) clamp(1.4rem, 3vw, 2.6rem); }
   .footGrid { grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }

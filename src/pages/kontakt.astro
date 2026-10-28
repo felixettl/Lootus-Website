@@ -177,8 +177,8 @@ const token = createFormToken()
     font: inherit;
     font-size: 1rem;
     color: var(--text);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(244, 237, 226, 0.16);
+    background: var(--field-bg);
+    border: 1px solid var(--field-border);
     border-radius: 2px;
     padding: 0.8rem 0.9rem;
     transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
@@ -204,7 +204,7 @@ const token = createFormToken()
   .field input:hover,
   .field select:hover,
   .field textarea:hover {
-    border-color: rgba(244, 237, 226, 0.3);
+    border-color: var(--field-border-hover);
   }
   .field input:focus-visible,
   .field select:focus-visible,
@@ -264,7 +264,7 @@ const token = createFormToken()
     padding: 0.9rem 1rem;
     line-height: 1.5;
     border-left: 3px solid var(--muted);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--field-bg);
   }
   .formStatus-ok {
     border-color: var(--amber);
