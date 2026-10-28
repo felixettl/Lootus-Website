@@ -35,6 +35,34 @@ export const fetchIntro = createCache<Intro>(async (previous) => {
   }
 })
 
+// Plain text shown outside the page body: Google description and footer line.
+export interface SiteMeta {
+  seoDescription: string
+  footerTagline: string
+}
+
+const fallbackMeta: SiteMeta = {
+  seoDescription:
+    'Wir sind das Lootus Kollektiv, ein Technoverein aus Konstanz am Bodensee. Wir veranstalten Partys mit Progressive, Peaktime und Acid Techno.',
+  footerTagline: 'Lootus Kollektiv aus Konstanz',
+}
+
+export const fetchSiteMeta = createCache<SiteMeta>(async (previous) => {
+  try {
+    const row = await sanity.fetch<Partial<SiteMeta> | null>(
+      `*[_id == "siteSettings"][0]{ seoDescription, footerTagline }`,
+    )
+    if (!row) return previous ?? fallbackMeta
+    return {
+      seoDescription: row.seoDescription || fallbackMeta.seoDescription,
+      footerTagline: row.footerTagline || fallbackMeta.footerTagline,
+    }
+  } catch (err) {
+    console.error('[sanity] site meta fetch failed:', err)
+    return previous ?? fallbackMeta
+  }
+})
+
 // Portable Text from the studio only allows plain text plus http(s)/mailto links.
 function bodyToHtml(body: unknown[] | undefined): string {
   return toHTML((body ?? []) as any, {

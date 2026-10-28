@@ -261,6 +261,9 @@ async function migrateContent() {
     _id: 'siteSettings',
     _type: 'siteSettings',
     introHi: 'Hi.',
+    seoDescription:
+      'Wir sind das Lootus Kollektiv, ein Technoverein aus Konstanz am Bodensee. Wir veranstalten Partys mit Progressive, Peaktime und Acid Techno.',
+    footerTagline: 'Lootus Kollektiv aus Konstanz',
     introText:
       'Schön, dass du da bist. Wir sind Lootus aus Konstanz und haben Lust, mit dir zusammen zu elektronischer Musik zu feiern: in einer Runde, in der du dich wohlfühlen kannst, auch wenn du noch niemanden kennst. Dafür stecken wir gemeinsam Zeit, Ideen und viel Herz in unsere Abende. Ob du einfach tanzen möchtest oder selbst eine Idee mitbringst: Wir freuen uns auf dich.',
   })

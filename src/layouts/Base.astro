@@ -1,13 +1,15 @@
 ---
 import { brand } from '../data/lootus.js'
+import { fetchSiteMeta } from '../data/site'
 
 interface Props {
   description?: string
   noindex?: boolean
 }
 const title = 'Lootus Kollektiv'
+const siteMeta = await fetchSiteMeta()
 const {
-  description = 'Wir sind das Lootus Kollektiv, ein Technoverein aus Konstanz am Bodensee. Wir veranstalten Partys mit Progressive, Peaktime und Acid Techno.',
+  description = siteMeta.seoDescription,
   noindex = false,
 } = Astro.props
 

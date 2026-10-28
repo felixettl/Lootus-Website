@@ -17,7 +17,7 @@ export default defineConfig({
           .title('Inhalt')
           .items([
             S.listItem()
-              .title('Startseite: Intro-Text')
+              .title('Startseite & Texte')
               .id('siteSettings')
               .child(S.document().schemaType('siteSettings').documentId('siteSettings')),
             S.divider(),

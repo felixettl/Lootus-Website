@@ -1,5 +1,8 @@
 ---
 import { brand } from '../data/lootus.js'
+import { fetchSiteMeta } from '../data/site'
+
+const { footerTagline } = await fetchSiteMeta()
 ---
 
 <footer class="footer" id="kontakt">
@@ -30,7 +33,7 @@ import { brand } from '../data/lootus.js'
   </div>
   <div class="footBase">
     <span>© {new Date().getFullYear()} {brand.short}{brand.founded < new Date().getFullYear() && `, seit ${brand.founded}`}</span>
-    <span>Lootus Kollektiv aus Konstanz</span>
+    <span>{footerTagline}</span>
     <span class="footLegalLinks">
       <a href="/impressum">Impressum</a>
       <a href="/datenschutz">Datenschutz</a>
