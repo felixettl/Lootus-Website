@@ -109,9 +109,6 @@ html.js [data-animate="lines"].visible .lineMask > span {
     --field-border-hover: rgba(20, 20, 20, 0.4);
     --icon: #6b6b6b;
   }
-  .vignette {
-    background: radial-gradient(120% 80% at 70% -10%, rgba(251, 169, 25, 0.06), transparent 55%);
-  }
 }
 
 .vignette {
@@ -119,10 +116,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background:
-    radial-gradient(120% 80% at 70% -10%, rgba(233, 196, 106, 0.06), transparent 55%),
-    radial-gradient(120% 120% at 50% 120%, var(--ink-deep), transparent 60%),
-    radial-gradient(140% 100% at 50% 50%, transparent 40%, rgba(3, 7, 14, 0.55));
+  background: none;
 }
 
 .pageGrain {
@@ -426,9 +420,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background:
-    radial-gradient(ellipse 90% 70% at 50% 50%, transparent 38%, rgba(4, 8, 15, 0.6)),
-    linear-gradient(180deg, rgba(7, 13, 24, 0.45) 0%, transparent 28%, transparent 62%, rgba(7, 13, 24, 0.75) 100%);
+  background: none;
 }
 
 .sliderBrand {
