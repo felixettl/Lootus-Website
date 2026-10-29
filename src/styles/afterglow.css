@@ -342,12 +342,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   position: fixed;
   inset: 0;
   z-index: 99;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--menu-bg);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  background: rgba(0, 0, 0, 0.5);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s var(--ease);
@@ -356,24 +351,69 @@ html.js [data-animate="lines"].visible .lineMask > span {
   opacity: 1;
   pointer-events: auto;
 }
-.navMenu nav {
+.navPanel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(78vw, 340px);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(1.6rem, 4vh, 2.8rem);
+  justify-content: space-between;
+  padding: clamp(5.5rem, 14vh, 7rem) 1.75rem 2rem;
+  background: var(--ink);
+  border-left: 1px solid var(--line);
+  transform: translateX(100%);
+  transition: transform 0.45s var(--ease);
+}
+.navMenuOpen .navPanel { transform: translateX(0); }
+.navMenuMain {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+.navMenuLegal {
+  display: flex;
+  gap: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
 }
 .navMenuItem {
-  font-family: var(--serif);
-  font-weight: 300;
-  font-size: clamp(2.4rem, 7vw, 5rem);
-  letter-spacing: -0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: clamp(0.8rem, 2.2vh, 1.1rem) 0;
+  font-family: var(--narrow);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 7vw, 2.1rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
   color: var(--text);
   opacity: 0;
   transform: translateY(18px);
   transition: color 0.3s var(--ease), opacity 0.45s var(--ease), transform 0.45s var(--ease);
+  transition-delay: 0s, calc(var(--i, 0) * 0.06s), calc(var(--i, 0) * 0.06s);
+}
+.navMenuMain .navMenuItem { border-bottom: 1px solid var(--line); }
+.navMenuNum {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.navMenuSmall {
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--muted);
 }
 .navMenuOpen .navMenuItem { opacity: 1; transform: translateY(0); }
-.navMenuItem:hover { color: var(--amber); }
+.navMenuItem:hover,
+.navMenuItem[aria-current='page'],
+.navMenuItem[aria-current='page'] .navMenuNum { color: var(--amber); }
 
 @media (min-width: 681px) {
   .navMenu {

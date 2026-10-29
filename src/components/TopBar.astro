@@ -1,4 +1,5 @@
 ---
+const path = Astro.url.pathname.replace(/\/$/, '') || '/'
 ---
 
 <header class="topbar">
@@ -8,7 +9,7 @@
       <span>Lootus</span>
     </a>
     <nav class="desktopNav desktopNavLeft" aria-label="Hauptnavigation">
-      <a href="/about" class="desktopNavItem">Lootus</a>
+      <a href="/about" class="desktopNavItem">Über uns</a>
       <a href="/kontakt" class="desktopNavItem">Kontakt</a>
     </nav>
     <a href="/" class="logoOnly" aria-label="Lootus Kollektiv">
@@ -27,12 +28,17 @@
 </header>
 
 <div class="navMenu" id="navMenu" aria-hidden="true">
-  <nav aria-label="Hauptnavigation">
-    <a href="/about" class="navMenuItem">Lootus</a>
-    <a href="/kontakt" class="navMenuItem">Kontakt</a>
-    <a href="/impressum" class="navMenuItem">Impressum</a>
-    <a href="/datenschutz" class="navMenuItem">Datenschutz</a>
+  <div class="navPanel">
+  <nav aria-label="Hauptnavigation" class="navMenuMain">
+    <a href="/" class="navMenuItem" style="--i:0" aria-current={path === '/' ? 'page' : undefined}><span class="navMenuNum">01</span>Home</a>
+    <a href="/about" class="navMenuItem" style="--i:1" aria-current={path === '/about' ? 'page' : undefined}><span class="navMenuNum">02</span>Über uns</a>
+    <a href="/kontakt" class="navMenuItem" style="--i:2" aria-current={path === '/kontakt' ? 'page' : undefined}><span class="navMenuNum">03</span>Kontakt</a>
   </nav>
+  <nav aria-label="Rechtliches" class="navMenuLegal">
+    <a href="/impressum" class="navMenuItem navMenuSmall" style="--i:3">Impressum</a>
+    <a href="/datenschutz" class="navMenuItem navMenuSmall" style="--i:4">Datenschutz</a>
+  </nav>
+  </div>
 </div>
 
 <script>

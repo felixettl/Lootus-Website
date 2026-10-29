@@ -27,12 +27,19 @@ const formatDate = (iso: string) =>
               {gallery.name}
               {gallery.date && <time datetime={gallery.date}>{formatDate(gallery.date)}</time>}
             </h2>
-            <div class="galleryGrid">
-              {gallery.images.map((ref) => (
-                <a href={imageUrl(ref, 1600)} target="_blank" rel="noopener noreferrer">
-                  <img src={imageUrl(ref, 800)} alt={gallery.name} loading="lazy" />
-                </a>
-              ))}
+            <div class="galleryMedia">
+              <div class="galleryGrid">
+                {gallery.images.map((ref) => (
+                  <div class="galleryItem">
+                    <img src={imageUrl(ref, 800)} alt={gallery.name} loading="lazy" />
+                  </div>
+                ))}
+              </div>
+              {gallery.images.length > 2 && (
+                <button type="button" class="galleryToggle" aria-expanded="false">
+                  Mehr anzeigen
+                </button>
+              )}
             </div>
           </section>
         ))}
@@ -41,6 +48,16 @@ const formatDate = (iso: string) =>
     <Footer />
   </div>
 </Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.galleryToggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const open = btn.closest('.gallery')!.classList.toggle('galleryOpen')
+      btn.setAttribute('aria-expanded', String(open))
+      btn.textContent = open ? 'Weniger anzeigen' : 'Mehr anzeigen'
+    })
+  })
+</script>
 
 <style>
   .shell {
@@ -94,8 +111,7 @@ const formatDate = (iso: string) =>
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 0.5rem;
   }
-  .galleryGrid a {
-    display: block;
+  .galleryItem {
     aspect-ratio: 1;
     overflow: hidden;
     background: var(--ink-deep);
@@ -105,5 +121,34 @@ const formatDate = (iso: string) =>
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+  .gallery:not(.galleryOpen) .galleryItem:nth-child(n + 3) {
+    display: none;
+  }
+  .galleryMedia {
+    position: relative;
+  }
+  .galleryToggle {
+    position: absolute;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .galleryOpen .galleryToggle {
+    position: static;
+    display: block;
+    margin-top: 0.75rem;
+    background: none;
+    border-color: var(--amber);
+    color: var(--amber);
   }
 </style>
