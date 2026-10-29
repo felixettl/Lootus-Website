@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro'
+import TopBar from '../components/TopBar.astro'
+import Footer from '../components/Footer.astro'
+import { fetchAbout, fetchGalleries } from '../data/about'
+import { imageUrl } from '../lib/sanity'
+import '../styles/global.css'
+import '../styles/afterglow.css'
+
+const [about, galleries] = await Promise.all([fetchAbout(), fetchGalleries()])
+
+const formatDate = (iso: string) =>
+  iso ? new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' }) : ''
+---
+
+<Base description={about.seoDescription || undefined}>
+  <div class="root">
+    <TopBar />
+    <div class="shell">
+      <main class="about">
+        <h1>{about.title}</h1>
+        {about.html && <div class="aboutText"><Fragment set:html={about.html} /></div>}
+
+        {galleries.map((gallery) => (
+          <section class="gallery">
+            <h2>
+              {gallery.name}
+              {gallery.date && <time datetime={gallery.date}>{formatDate(gallery.date)}</time>}
+            </h2>
+            <div class="galleryGrid">
+              {gallery.images.map((ref) => (
+                <a href={imageUrl(ref, 1600)} target="_blank" rel="noopener noreferrer">
+                  <img src={imageUrl(ref, 800)} alt={gallery.name} loading="lazy" />
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </main>
+    </div>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .shell {
+    max-width: var(--maxw, 1440px);
+    margin: 0 auto;
+    padding: clamp(6rem, 12vh, 9rem) var(--gutter, 1.5rem) 4rem;
+  }
+  .about h1 {
+    font-family: var(--narrow, inherit);
+    letter-spacing: 0.02em;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 2rem;
+    max-width: 720px;
+    margin-inline: auto;
+  }
+  .aboutText {
+    max-width: 720px;
+    margin: 0 auto 4rem;
+  }
+  .aboutText :global(h2) {
+    font-size: 1.1rem;
+    margin: 2rem 0 0.5rem;
+    color: var(--amber);
+  }
+  .aboutText :global(p) {
+    line-height: 1.7;
+    color: var(--text-soft);
+  }
+  .aboutText :global(a) {
+    text-decoration: underline;
+  }
+  .gallery {
+    margin-bottom: 3.5rem;
+  }
+  .gallery h2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+    font-family: var(--narrow, inherit);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    margin: 0 0 1rem;
+  }
+  .gallery time {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .galleryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.5rem;
+  }
+  .galleryGrid a {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--ink-deep);
+  }
+  .galleryGrid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>

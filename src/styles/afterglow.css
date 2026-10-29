@@ -804,6 +804,21 @@ html.js [data-animate="lines"].visible .lineMask > span {
   letter-spacing: 0.005em;
   color: var(--text-soft);
 }
+.moreBtn {
+  align-self: flex-start;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease);
+}
+.moreBtn:hover {
+  background: var(--amber);
+  color: var(--ink);
+}
 .introHi {
   flex: none;
   font-family: var(--narrow);
