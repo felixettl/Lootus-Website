@@ -91,26 +91,6 @@ html.js [data-animate="lines"].visible .lineMask > span {
   isolation: isolate;
 }
 
-@media (prefers-color-scheme: light) {
-  .root {
-    --ink: #ffffff;
-    --ink-deep: #f0f0f0;
-    --amber: #c25f00;
-    --amber-bright: #a04c00;
-    --text: #141414;
-    --muted: #6b6b6b;
-    --text-soft: rgba(20, 20, 20, 0.82);
-    --line: rgba(20, 20, 20, 0.14);
-    --line-soft: rgba(20, 20, 20, 0.1);
-    --topbar-bg: rgba(255, 255, 255, 0.88);
-    --menu-bg: rgba(255, 255, 255, 0.94);
-    --field-bg: rgba(0, 0, 0, 0.03);
-    --field-border: rgba(20, 20, 20, 0.2);
-    --field-border-hover: rgba(20, 20, 20, 0.4);
-    --icon: #6b6b6b;
-  }
-}
-
 .vignette {
   position: fixed;
   inset: 0;
