@@ -43,8 +43,8 @@ export interface SiteMeta {
 
 const fallbackMeta: SiteMeta = {
   seoDescription:
-    'Wir sind das Lootus Kollektiv, ein Technoverein aus Konstanz am Bodensee. Wir veranstalten Partys mit Progressive, Peaktime und Acid Techno.',
-  footerTagline: 'Lootus Kollektiv aus Konstanz',
+    'Wir sind das Lootus Kollektiv, ein Verein aus Konstanz am Bodensee. Wir setzen uns für die Kulturlandschaft in Konstanz ein und organisieren Musikveranstaltungen mit Progressive, Peaktime und Acid Techno.',
+  footerTagline: 'Konstanz',
 }
 
 export const fetchSiteMeta = createCache<SiteMeta>(async (previous) => {
