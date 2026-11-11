@@ -6,6 +6,14 @@ export interface AboutPage {
   title: string
   seoDescription: string
   html: string
+  sections: AboutSection[]
+}
+
+export interface AboutSection {
+  heading: string
+  html: string
+  backgroundImage?: string
+  galleryImages: { asset: string; alt: string }[]
 }
 
 export interface EventGallery {
@@ -30,16 +38,32 @@ function bodyToHtml(body: unknown[] | undefined): string {
   })
 }
 
-const fallbackAbout: AboutPage = { title: 'Über uns', seoDescription: '', html: '' }
+const fallbackAbout: AboutPage = { title: 'Über uns', seoDescription: '', html: '', sections: [] }
 
 export const fetchAbout = createCache<AboutPage>(async (previous) => {
   try {
-    const row = await sanity.fetch<any | null>(`*[_type == "aboutPage"][0]{ title, seoDescription, body }`)
+    const row = await sanity.fetch<any | null>(`*[_type == "aboutPage"][0]{
+      title,
+      seoDescription,
+      body,
+      sections[]{
+        heading,
+        body,
+        "backgroundImage": backgroundImage.asset._ref,
+        "galleryImages": galleryImages[defined(asset)]{"asset": asset._ref, alt}
+      }
+    }`)
     if (!row) return previous ?? fallbackAbout
     return {
       title: row.title || fallbackAbout.title,
       seoDescription: row.seoDescription ?? '',
       html: bodyToHtml(row.body),
+      sections: (row.sections ?? []).map((section: any) => ({
+        heading: section.heading ?? '',
+        html: bodyToHtml(section.body),
+        backgroundImage: section.backgroundImage,
+        galleryImages: section.galleryImages ?? [],
+      })),
     }
   } catch (err) {
     console.error('[sanity] about fetch failed:', err)

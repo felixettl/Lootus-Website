@@ -19,7 +19,41 @@ const formatDate = (iso: string) =>
     <div class="shell">
       <main class="about">
         <h1>{about.title}</h1>
-        {about.html && <div class="aboutText"><Fragment set:html={about.html} /></div>}
+        {about.sections.length > 0 ? (
+          <div class="aboutSections">
+            {about.sections.map((section) => (
+              <section
+                class:list={['aboutSection', section.backgroundImage && 'hasBackground']}
+                style={section.backgroundImage ? `--section-image: url('${imageUrl(section.backgroundImage, 1800)}')` : undefined}
+              >
+                <div class="aboutSectionInner">
+                  <div class="aboutSectionCopy">
+                    <h2>{section.heading}</h2>
+                    {section.html && <div class="aboutSectionText"><Fragment set:html={section.html} /></div>}
+                  </div>
+                  {section.galleryImages.length > 0 && (
+                    <div class="sectionGallery" data-marquee>
+                      <div class="sectionGalleryTrack">
+                        <div class="sectionGalleryGroup">
+                          {section.galleryImages.map((image) => (
+                            <img src={imageUrl(image.asset, 1000)} alt={image.alt || section.heading} loading="lazy" />
+                          ))}
+                        </div>
+                        <div class="sectionGalleryGroup" aria-hidden="true">
+                          {section.galleryImages.map((image) => (
+                            <img src={imageUrl(image.asset, 1000)} alt="" loading="lazy" />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : about.html ? (
+          <div class="aboutText"><Fragment set:html={about.html} /></div>
+        ) : null}
 
         {galleries.map((gallery) => (
           <section class="gallery">
@@ -50,6 +84,40 @@ const formatDate = (iso: string) =>
 </Base>
 
 <script>
+  const backgroundSections = [...document.querySelectorAll<HTMLElement>('.aboutSection.hasBackground')]
+  let frame = 0
+
+  const updateBackgrounds = () => {
+    frame = 0
+    const viewportCenter = window.innerHeight / 2
+    const fadeDistance = window.innerHeight * 0.75
+
+    backgroundSections.forEach((section) => {
+      const bounds = section.getBoundingClientRect()
+      const sectionCenter = bounds.top + bounds.height / 2
+      const opacity = Math.max(0, 0.5 * (1 - Math.abs(sectionCenter - viewportCenter) / fadeDistance))
+      section.style.setProperty('--image-opacity', String(opacity))
+    })
+  }
+
+  const requestBackgroundUpdate = () => {
+    if (!frame) frame = requestAnimationFrame(updateBackgrounds)
+  }
+
+  window.addEventListener('scroll', requestBackgroundUpdate, { passive: true })
+  window.addEventListener('resize', requestBackgroundUpdate)
+  updateBackgrounds()
+
+  document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((gallery) => {
+    const groups = [...gallery.querySelectorAll<HTMLElement>('.sectionGalleryGroup')]
+    const updateOverflow = () => {
+      gallery.classList.toggle('is-overflowing', groups[0].scrollWidth > gallery.clientWidth + 1)
+    }
+    new ResizeObserver(updateOverflow).observe(gallery)
+    groups.forEach((group) => new ResizeObserver(updateOverflow).observe(group))
+    updateOverflow()
+  })
+
   document.querySelectorAll<HTMLButtonElement>('.galleryToggle').forEach((btn) => {
     btn.addEventListener('click', () => {
       const open = btn.closest('.gallery')!.classList.toggle('galleryOpen')
@@ -88,6 +156,87 @@ const formatDate = (iso: string) =>
   }
   .aboutText :global(a) {
     text-decoration: underline;
+  }
+  .aboutSection {
+    position: relative;
+    isolation: isolate;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 4rem max(var(--gutter, 1.5rem), calc((100vw - 1100px) / 2));
+    overflow: hidden;
+  }
+  .aboutSection + .aboutSection {
+    margin-top: 1rem;
+  }
+  .aboutSection.hasBackground::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: '';
+    opacity: var(--image-opacity, 0);
+    background-image: linear-gradient(rgba(16, 16, 16, 0.28), rgba(16, 16, 16, 0.48)), var(--section-image);
+    background-size: cover;
+    background-position: center;
+    will-change: opacity;
+  }
+  .aboutSectionInner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .aboutSectionCopy {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .aboutSectionCopy h2 {
+    margin: 0 0 1rem;
+    color: var(--amber);
+    font-family: var(--narrow, inherit);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  .aboutSectionText :global(p) {
+    margin: 0 0 1rem;
+    color: var(--text-soft);
+    line-height: 1.7;
+  }
+  .aboutSectionText :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .aboutSectionText :global(a) {
+    text-decoration: underline;
+  }
+  .sectionGallery {
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+  .sectionGalleryTrack,
+  .sectionGalleryGroup {
+    display: flex;
+    width: max-content;
+  }
+  .sectionGalleryTrack {
+    gap: 0;
+  }
+  .sectionGalleryGroup {
+    gap: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .sectionGalleryGroup img {
+    width: clamp(12rem, 25vw, 22rem);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .sectionGalleryGroup[aria-hidden='true'] {
+    display: none;
+  }
+  .sectionGallery.is-overflowing .sectionGalleryGroup[aria-hidden='true'] {
+    display: flex;
+  }
+  .sectionGallery.is-overflowing .sectionGalleryTrack {
+    animation: galleryDriftRight 48s linear infinite;
+  }
+  @keyframes galleryDriftRight {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
   }
   .gallery {
     margin-bottom: 3.5rem;
@@ -150,5 +299,17 @@ const formatDate = (iso: string) =>
     background: none;
     border-color: var(--amber);
     color: var(--amber);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sectionGallery {
+      overflow-x: auto;
+    }
+    .sectionGallery.is-overflowing .sectionGalleryTrack {
+      animation: none;
+      transform: none;
+    }
+    .sectionGallery.is-overflowing .sectionGalleryGroup[aria-hidden='true'] {
+      display: none;
+    }
   }
 </style>
