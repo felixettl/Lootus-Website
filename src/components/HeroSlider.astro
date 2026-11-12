@@ -5,16 +5,17 @@ interface Props {
   slides: Slide[]
 }
 const { slides } = Astro.props
+const initialSlide = slides.length > 0 ? Math.floor(Math.random() * slides.length) : 0
 ---
 
 <section class="slider" id="hero" aria-label="Galerie">
   {slides.map((slide, i) => (
-    <div class:list={['slide', i === 0 && 'slideActive']} data-index={i}>
+    <div class:list={['slide', i === initialSlide && 'slideActive']} data-index={i}>
       <img
         class="slideImg"
         src={imageUrl(slide.image)}
         alt=""
-        loading={i === 0 ? 'eager' : 'lazy'}
+        loading={i === initialSlide ? 'eager' : 'lazy'}
         draggable="false"
       />
       {slide.instagram && (
@@ -45,7 +46,7 @@ const { slides } = Astro.props
 
       <div class="sliderDots" aria-hidden="true">
         {slides.map((_, i) => (
-          <button class:list={['sliderDot', i === 0 && 'sliderDotActive']} data-dot={String(i)}></button>
+          <button class:list={['sliderDot', i === initialSlide && 'sliderDotActive']} data-dot={String(i)}></button>
         ))}
       </div>
     </>
@@ -60,7 +61,7 @@ const { slides } = Astro.props
     const dots = section.querySelectorAll<HTMLButtonElement>('.sliderDot')
 
     if (slides.length >= 2) {
-      let current = 0
+      let current = Math.max(0, [...slides].findIndex((slide) => slide.classList.contains('slideActive')))
       let timer: ReturnType<typeof setInterval>
 
       function goTo(n: number) {

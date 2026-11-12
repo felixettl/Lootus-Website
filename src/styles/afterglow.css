@@ -699,7 +699,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
 
 @media (hover: hover) {
   .row:hover .rowThumbImg .photoImg {
-    filter: grayscale(1) sepia(0.42) saturate(1.5) hue-rotate(-6deg) contrast(1.05) brightness(1);
+    filter: none;
     transform: scale(1.06);
   }
   .row:hover .rowDetails { grid-template-rows: 1fr; }
@@ -1155,7 +1155,7 @@ html.js [data-animate="lines"].visible .lineMask > span {
   .row.isOpen { grid-template-columns: 2.4rem var(--thumb-open) 1fr auto; }
   .row.isOpen .rowTitle { transform: translateX(0.7rem); }
   .row.isOpen .rowThumbImg .photoImg {
-    filter: grayscale(1) sepia(0.42) saturate(1.5) hue-rotate(-6deg) contrast(1.05) brightness(1);
+    filter: none;
     transform: scale(1.06);
   }
   .masthead { grid-template-columns: repeat(2, 1fr); }
