@@ -25,18 +25,29 @@ export function createCache<T>(
     updatedAt = Date.now()
   }
 
-  return async function get(): Promise<T> {
+  async function refreshNow(): Promise<T> {
+    if (!refreshing) {
+      let request: Promise<void>
+      request = refresh().finally(() => {
+        if (refreshing === request) refreshing = null
+      })
+      refreshing = request
+    }
+    await refreshing
+    return value as T
+  }
+
+  const get = async (): Promise<T> => {
     if (value === undefined) {
-      await refresh()
-      return value as T
+      return refreshNow()
     }
     if (Date.now() - updatedAt >= ttlMs && !refreshing) {
-      refreshing = refresh()
-        .catch((err) => console.error('[cache] background refresh failed:', err))
-        .finally(() => { refreshing = null })
+      void refreshNow().catch((err) => console.error('[cache] background refresh failed:', err))
     }
     return value
   }
+
+  return Object.assign(get, { refresh: refreshNow })
 }
 
 /**
