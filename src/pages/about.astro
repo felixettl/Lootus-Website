@@ -230,13 +230,17 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
   }
   .membershipForm {
     scroll-margin-top: 1.5rem;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: #1d1d1d;
   }
   .membershipForm iframe {
     display: block;
     width: 100%;
     min-height: 800px;
     border: 0;
-    background: #fff;
+    background: #101010;
+    filter: invert(1) hue-rotate(180deg);
   }
   .membershipCredit {
     display: block;
