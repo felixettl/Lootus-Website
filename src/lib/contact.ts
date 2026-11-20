@@ -6,6 +6,7 @@ export const CONTACT_TOPICS = [
   'Mithelfen bei Events',
   'Mitglied werden',
   'Booking / Kooperation',
+  'Merch bestellen',
   'Presse',
   'Sonstiges',
 ] as const

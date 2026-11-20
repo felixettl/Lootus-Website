@@ -17,6 +17,7 @@ const MESSAGES: Record<string, { tone: 'ok' | 'error'; text: string }> = {
 }
 
 const status = MESSAGES[Astro.url.searchParams.get('status') ?? '']
+const requestedTopic = CONTACT_TOPICS.find((topic) => topic === Astro.url.searchParams.get('topic'))
 const token = createFormToken()
 ---
 
@@ -53,7 +54,7 @@ const token = createFormToken()
           <label class="field">
             <span class="fieldLabel">Anliegen</span>
             <select name="topic" required>
-              {CONTACT_TOPICS.map((topic) => <option value={topic}>{topic}</option>)}
+              {CONTACT_TOPICS.map((topic) => <option value={topic} selected={topic === requestedTopic}>{topic}</option>)}
             </select>
           </label>
 

@@ -126,6 +126,11 @@ const formatPrice = (price: number) =>
           )}
         </section>
 
+        <p class="mergeOrderCta">
+          Du möchtest Merch bestellen?{' '}
+          <a href="/kontakt?topic=Merch%20bestellen#formular">Hier anfragen.</a>
+        </p>
+
         {merge.closingImage && (
           <figure class="mergeClosing">
             <img src={imageUrl(merge.closingImage, 2000)} alt="" loading="lazy" />
@@ -437,6 +442,17 @@ const formatPrice = (price: number) =>
     grid-column: 1 / -1;
     margin: 0;
     color: var(--muted);
+  }
+  .mergeOrderCta {
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    color: var(--muted);
+    line-height: 1.6;
+    text-align: center;
+  }
+  .mergeOrderCta a {
+    color: var(--amber);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
   .mergeClosing {
     margin: clamp(4rem, 9vw, 8rem) 0 0;
