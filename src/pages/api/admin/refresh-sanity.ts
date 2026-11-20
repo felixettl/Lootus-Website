@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro'
 import { fetchAbout, fetchGalleries } from '../../../data/about'
 import { fetchEvents } from '../../../data/calendar'
 import { fetchMembers } from '../../../data/members'
-import { fetchIntro, fetchSiteMeta } from '../../../data/site'
+import { fetchIntro, fetchLegalPage, fetchSiteMeta } from '../../../data/site'
 import { fetchSlides } from '../../../data/slides'
 
 export const prerender = false
@@ -36,9 +36,11 @@ export const POST: APIRoute = async ({ request }) => {
       fetchMembers.refresh(),
       fetchIntro.refresh(),
       fetchSiteMeta.refresh(),
+      fetchLegalPage('impressum'),
+      fetchLegalPage('datenschutz'),
       fetchSlides.refresh(),
     ])
-    return Response.json({ ok: true, message: 'Sanity-Daten geprüft' }, { headers: responseHeaders })
+    return Response.json({ ok: true, message: 'Sanity-Daten neu geladen' }, { headers: responseHeaders })
   } catch (error) {
     console.error('[admin] Sanity refresh failed:', error)
     return Response.json({ error: 'Sanity refresh failed' }, { status: 502, headers: responseHeaders })
