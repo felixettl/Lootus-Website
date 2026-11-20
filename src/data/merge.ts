@@ -24,7 +24,7 @@ export interface MergePageData {
 }
 
 const fallback: MergePageData = {
-  bannerTitle: 'MERCHE',
+  bannerTitle: 'MERCH',
   bannerImage: '',
   pieces: [],
 }

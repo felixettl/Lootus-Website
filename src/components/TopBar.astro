@@ -17,7 +17,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/'
     </a>
     <nav class="desktopNav desktopNavRight" aria-label="Hauptnavigation">
       <a href="/sammlungen" class="desktopNavItem" aria-current={path === '/sammlungen' ? 'page' : undefined}>Sammlungen</a>
-      <a href="/merche" class="desktopNavItem" aria-current={path === '/merche' ? 'page' : undefined}>Merche</a>
+      <a href="/merch" class="desktopNavItem" aria-current={path === '/merch' ? 'page' : undefined}>Merch</a>
       <a href="/kontakt" class="desktopNavItem" aria-current={path === '/kontakt' ? 'page' : undefined}>Kontakt</a>
     </nav>
     <button class="burger" id="burgerBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navMenu">
@@ -34,7 +34,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/'
     <a href="/" class="navMenuItem" style="--i:0" aria-current={path === '/' ? 'page' : undefined}><span class="navMenuNum">01</span>Start</a>
     <a href="/about" class="navMenuItem" style="--i:1" aria-current={path === '/about' ? 'page' : undefined}><span class="navMenuNum">02</span>Über uns</a>
     <a href="/sammlungen" class="navMenuItem" style="--i:2" aria-current={path === '/sammlungen' ? 'page' : undefined}><span class="navMenuNum">03</span>Sammlungen</a>
-    <a href="/merche" class="navMenuItem" style="--i:3" aria-current={path === '/merche' ? 'page' : undefined}><span class="navMenuNum">04</span>Merche</a>
+    <a href="/merch" class="navMenuItem" style="--i:3" aria-current={path === '/merch' ? 'page' : undefined}><span class="navMenuNum">04</span>Merch</a>
     <a href="/kontakt" class="navMenuItem" style="--i:4" aria-current={path === '/kontakt' ? 'page' : undefined}><span class="navMenuNum">05</span>Kontakt</a>
   </nav>
   <nav aria-label="Rechtliches" class="navMenuLegal">

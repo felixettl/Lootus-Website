@@ -2,7 +2,7 @@ import { defineArrayMember, defineField, defineType } from 'sanity'
 
 export const mergePage = defineType({
   name: 'mergePage',
-  title: 'Merche',
+  title: 'Merch',
   type: 'document',
   fields: [
     defineField({
@@ -10,7 +10,7 @@ export const mergePage = defineType({
       title: 'Banner-Text',
       description: 'Große Venus-Rising-Schrift links im Banner.',
       type: 'string',
-      initialValue: 'MERCHE',
+      initialValue: 'MERCH',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -95,5 +95,5 @@ export const mergePage = defineType({
       options: { hotspot: true },
     }),
   ],
-  preview: { prepare: () => ({ title: 'Merche' }) },
+  preview: { prepare: () => ({ title: 'Merch' }) },
 })

@@ -25,7 +25,7 @@ export default defineConfig({
               .id('aboutPage')
               .child(S.document().schemaType('aboutPage').documentId('aboutPage')),
             S.listItem()
-              .title('Merche')
+              .title('Merch')
               .id('mergePage')
               .child(S.document().schemaType('mergePage').documentId('mergePage')),
             S.documentTypeListItem('eventGallery').title('Event-Fotogalerien'),

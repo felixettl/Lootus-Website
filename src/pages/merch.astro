@@ -12,12 +12,12 @@ const formatPrice = (price: number) =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price)
 ---
 
-<Base description="Merche Pieces vom Lootus Kollektiv.">
+<Base description="Merch Pieces vom Lootus Kollektiv.">
   <div class="root mergePage">
     <TopBar />
     <div class="mergeShell">
       {merge.bannerImage && (
-        <section class="mergeHero" aria-label="Merche">
+        <section class="mergeHero" aria-label="Merch">
           <img
             class="mergeHeroImage"
             src={imageUrl(merge.bannerImage, 2200)}
