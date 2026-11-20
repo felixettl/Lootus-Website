@@ -39,23 +39,26 @@ export const fetchIntro = createCache<Intro>(async (previous) => {
 export interface SiteMeta {
   seoDescription: string
   footerTagline: string
+  showMembershipFormEmbed: boolean
 }
 
 const fallbackMeta: SiteMeta = {
   seoDescription:
     'Wir sind das Lootus Kollektiv, ein Verein aus Konstanz am Bodensee. Wir setzen uns für die Kulturlandschaft in Konstanz ein und organisieren Musikveranstaltungen mit Progressive, Peaktime und Acid Techno.',
   footerTagline: 'Konstanz',
+  showMembershipFormEmbed: true,
 }
 
 export const fetchSiteMeta = createCache<SiteMeta>(async (previous) => {
   try {
     const row = await sanity.fetch<Partial<SiteMeta> | null>(
-      `*[_id == "siteSettings"][0]{ seoDescription, footerTagline }`,
+      `*[_id == "siteSettings"][0]{ seoDescription, footerTagline, showMembershipFormEmbed }`,
     )
     if (!row) return previous ?? fallbackMeta
     return {
       seoDescription: row.seoDescription || fallbackMeta.seoDescription,
       footerTagline: row.footerTagline || fallbackMeta.footerTagline,
+      showMembershipFormEmbed: row.showMembershipFormEmbed ?? fallbackMeta.showMembershipFormEmbed,
     }
   } catch (err) {
     console.error('[sanity] site meta fetch failed:', err)

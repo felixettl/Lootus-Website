@@ -3,11 +3,12 @@ import Base from '../layouts/Base.astro'
 import TopBar from '../components/TopBar.astro'
 import Footer from '../components/Footer.astro'
 import { fetchAbout } from '../data/about'
+import { fetchSiteMeta } from '../data/site'
 import { imageUrl } from '../lib/sanity'
 import '../styles/global.css'
 import '../styles/afterglow.css'
 
-const about = await fetchAbout()
+const [about, siteMeta] = await Promise.all([fetchAbout(), fetchSiteMeta()])
 const applicationUrl = 'https://easyverein.com/public/LKO/applicationform/31518'
 const canEmbedApplication = Astro.url.protocol === 'https:'
 ---
@@ -57,7 +58,7 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
           <h2 id="membership-title">Werde Mitglied</h2>
           <p>Werde Teil des Lootus Kollektivs und unterstütze unsere Arbeit.</p>
           <a class="membershipButton" href={applicationUrl} target="_blank" rel="noopener noreferrer">Mitgliedsantrag öffnen</a>
-          {canEmbedApplication ? (
+          {siteMeta.showMembershipFormEmbed && canEmbedApplication ? (
             <div class="membershipForm" id="mitgliedsantrag-formular">
               <iframe
                 src={`${applicationUrl}?iframe=True`}
@@ -65,9 +66,9 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
                 loading="lazy"
               ></iframe>
             </div>
-          ) : (
+          ) : siteMeta.showMembershipFormEmbed ? (
             <p class="membershipFallback">Das Formular wird in einem neuen Tab auf easyVerein geöffnet.</p>
-          )}
+          ) : null}
           <small class="membershipCredit">
             <a href="https://easyverein.com" title="Vereinsverwaltungssoftware easyVerein" target="_blank" rel="noopener noreferrer">Vereinsverwaltung von easyVerein</a>
           </small>

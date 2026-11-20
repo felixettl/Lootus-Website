@@ -35,6 +35,13 @@ export const siteSettings = defineType({
       type: 'string',
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'showMembershipFormEmbed',
+      title: 'Mitgliedsantrag auf der Website einbetten',
+      description: 'Wenn deaktiviert, wird auf der Über-uns-Seite nur der direkte Button zum EasyVerein-Antrag angezeigt.',
+      type: 'boolean',
+      initialValue: true,
+    }),
   ],
   preview: { prepare: () => ({ title: 'Startseite & Texte' }) },
 })
