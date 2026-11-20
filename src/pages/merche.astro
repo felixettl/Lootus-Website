@@ -1,0 +1,482 @@
+---
+import Base from '../layouts/Base.astro'
+import TopBar from '../components/TopBar.astro'
+import Footer from '../components/Footer.astro'
+import { fetchMergePage } from '../data/merge'
+import { imageUrl } from '../lib/sanity'
+import '../styles/global.css'
+import '../styles/afterglow.css'
+
+const merge = await fetchMergePage()
+const formatPrice = (price: number) =>
+  new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price)
+---
+
+<Base description="Merche Pieces vom Lootus Kollektiv.">
+  <div class="root mergePage">
+    <TopBar />
+    <div class="mergeShell">
+      {merge.bannerImage && (
+        <section class="mergeHero" aria-label="Merche">
+          <img
+            class="mergeHeroImage"
+            src={imageUrl(merge.bannerImage, 2200)}
+            alt=""
+            fetchpriority="high"
+          />
+          <div class="mergeHeroShade" aria-hidden="true"></div>
+          <div class="mergeHeroCopy">
+            <h1 class="mergeHeroTitle">{merge.bannerTitle}</h1>
+            <header class="mergeBrand">
+              <span class="mergeBy">by</span>
+              <p class="mergeBrandName"><span>Lootus</span><span>Kollektiv</span></p>
+            </header>
+          </div>
+        </section>
+      )}
+
+      <main class="mergeContent">
+        <section class="mergePieces" aria-label="Pieces">
+          {merge.pieces.length > 0 ? (
+            <div class="mergePieceGrid">
+              {merge.pieces.map((piece) => {
+                const initialColor = piece.colors[0]
+                return (
+                  <article class="mergePiece" data-piece={piece.id}>
+                    {initialColor ? (
+                      <div
+                        class="mergePieceMedia"
+                        role="group"
+                        aria-label={`Auswahl für ${piece.name}`}
+                        tabindex="0"
+                      >
+                        <img
+                          class="mergePieceImage"
+                          data-main-image
+                          src={imageUrl(initialColor.front, 1000)}
+                          alt={`${piece.name}, ${initialColor.name} – Vorderseite`}
+                          loading="lazy"
+                        />
+                        <div class="mergePieceOverlay">
+                          <div class="mergeSideOptions" aria-label="Ansicht auswählen">
+                            <button
+                              type="button"
+                              class="mergeSideOption mergeSideOptionActive"
+                              data-side="front"
+                              aria-label={`${piece.name}: Vorderseite anzeigen`}
+                              aria-pressed="true"
+                            >
+                              <img
+                                class="mergeSideThumbnail"
+                                src={imageUrl(initialColor.front, 300)}
+                                alt=""
+                                loading="lazy"
+                              />
+                            </button>
+                            <button
+                              type="button"
+                              class="mergeSideOption"
+                              data-side="back"
+                              aria-label={`${piece.name}: Rückseite anzeigen`}
+                              aria-pressed="false"
+                            >
+                              <img
+                                class="mergeSideThumbnail"
+                                src={imageUrl(initialColor.back, 300)}
+                                alt=""
+                                loading="lazy"
+                              />
+                            </button>
+                          </div>
+                          <div class="mergeColors" aria-label={`Farbe für ${piece.name} auswählen`}>
+                          {piece.colors.map((color, index) => (
+                            <button
+                              type="button"
+                              class:list={['mergeColor', index === 0 && 'mergeColorActive']}
+                              style={`--swatch-color: ${color.colorCode}`}
+                              aria-label={`${color.name} auswählen`}
+                              aria-pressed={index === 0 ? 'true' : 'false'}
+                              data-front={imageUrl(color.front, 1000)}
+                              data-back={imageUrl(color.back, 1000)}
+                              data-front-alt={`${piece.name}, ${color.name} – Vorderseite`}
+                              data-back-alt={`${piece.name}, ${color.name} – Rückseite`}
+                              data-color-name={color.name}
+                            >
+                              <span class="mergeSwatch" aria-hidden="true"></span>
+                            </button>
+                          ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div class="mergePieceMedia mergeNoColors">
+                        <p>Farbvarianten folgen.</p>
+                      </div>
+                    )}
+                    <div class="mergePieceHeading">
+                      <h2>{piece.name}</h2>
+                      {piece.price != null && <span class="mergePrice">{formatPrice(piece.price)}</span>}
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
+          ) : (
+            <p class="mergeEmpty">Neue Pieces folgen in Kürze.</p>
+          )}
+        </section>
+
+        {merge.closingImage && (
+          <figure class="mergeClosing">
+            <img src={imageUrl(merge.closingImage, 2000)} alt="" loading="lazy" />
+          </figure>
+        )}
+      </main>
+    </div>
+    <Footer />
+  </div>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.mergePiece').forEach((piece) => {
+    const mainImage = piece.querySelector<HTMLImageElement>('[data-main-image]')
+    const sideOptions = piece.querySelectorAll<HTMLButtonElement>('.mergeSideOption')
+    const colorOptions = piece.querySelectorAll<HTMLButtonElement>('.mergeColor')
+    let currentSide: 'front' | 'back' = 'front'
+    let currentColor = colorOptions[0]
+
+    function updateMainImage() {
+      if (!mainImage || !currentColor) return
+      mainImage.src = currentSide === 'front'
+        ? currentColor.dataset.front ?? ''
+        : currentColor.dataset.back ?? ''
+      mainImage.alt = currentSide === 'front'
+        ? currentColor.dataset.frontAlt ?? ''
+        : currentColor.dataset.backAlt ?? ''
+    }
+
+    colorOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        currentColor = option
+        sideOptions.forEach((sideOption) => {
+          const thumbnail = sideOption.querySelector<HTMLImageElement>('.mergeSideThumbnail')
+          const side = sideOption.dataset.side
+          if (thumbnail) {
+            thumbnail.src = side === 'front'
+              ? option.dataset.front ?? ''
+              : option.dataset.back ?? ''
+          }
+          sideOption.setAttribute('aria-label', `${option.dataset.colorName}: ${side === 'front' ? 'Vorderseite' : 'Rückseite'} anzeigen`)
+        })
+        colorOptions.forEach((item) => {
+          const active = item === option
+          item.classList.toggle('mergeColorActive', active)
+          item.setAttribute('aria-pressed', String(active))
+        })
+        updateMainImage()
+      })
+    })
+
+    sideOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        currentSide = option.dataset.side === 'back' ? 'back' : 'front'
+        sideOptions.forEach((item) => {
+          const active = item === option
+          item.classList.toggle('mergeSideOptionActive', active)
+          item.setAttribute('aria-pressed', String(active))
+        })
+        updateMainImage()
+      })
+    })
+  })
+</script>
+
+<style>
+  .mergeShell {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: clamp(5rem, 9vh, 7rem) var(--gutter) 0;
+  }
+  .mergeHero {
+    position: relative;
+    left: 50%;
+    width: calc(100vw - 2 * var(--gutter));
+    max-width: none;
+    height: clamp(13rem, 27vw, 28rem);
+    transform: translateX(-50%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: var(--ink-deep);
+    isolation: isolate;
+  }
+  .mergeHeroImage,
+  .mergeHeroShade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .mergeHeroImage {
+    object-fit: cover;
+    object-position: center;
+  }
+  .mergeHeroShade {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.08) 72%, transparent);
+  }
+  .mergeHeroCopy {
+    position: relative;
+    z-index: 1;
+    width: 66%;
+    padding-left: clamp(1.5rem, 4vw, 3.5rem);
+  }
+  .mergeHeroTitle {
+    width: 100%;
+    margin: 0;
+    color: #080808;
+    font-family: var(--display);
+    font-size: clamp(2rem, 4.8vw, 4.8rem);
+    font-weight: 400;
+    line-height: 0.92;
+    overflow-wrap: anywhere;
+  }
+  .mergeBrand {
+    padding: 1rem 0 0;
+    text-align: left;
+  }
+  .mergeBy {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .mergeBrandName {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    color: #080808;
+    font-family: var(--display);
+    font-size: clamp(1.2rem, 2.4vw, 2.1rem);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+  .mergeBrandName span + span {
+    color: var(--amber);
+  }
+  .mergeContent {
+    padding-top: clamp(2.5rem, 6vw, 5rem);
+    padding-bottom: clamp(4rem, 9vw, 8rem);
+  }
+  .mergePieceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), min(100%, 300px)));
+    justify-content: start;
+    gap: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 2vw, 2rem);
+  }
+  .mergePiece {
+    min-width: 0;
+    border: 1px solid var(--line-soft);
+    background: rgba(255, 255, 255, 0.01);
+    transition: border-color 0.45s var(--ease), background-color 0.45s var(--ease);
+  }
+  .mergePiece:hover {
+    border-color: var(--amber);
+    background: rgba(251, 169, 25, 0.035);
+  }
+  .mergePieceHeading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.75rem;
+    padding: 0.8rem 0.9rem;
+  }
+  .mergePieceHeading h2 {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+  .mergePrice {
+    color: var(--amber);
+    font-family: var(--narrow);
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  .mergePieceMedia {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--ink-deep);
+    isolation: isolate;
+  }
+  .mergePieceImage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease);
+  }
+  .mergePieceMedia:hover .mergePieceImage,
+  .mergePieceMedia:focus-within .mergePieceImage {
+    transform: scale(1.035);
+  }
+  .mergePieceMedia:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+  .mergePieceOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.55rem;
+    padding: 0.75rem 0.5rem 1rem;
+    background: linear-gradient(180deg, transparent 22%, rgba(0, 0, 0, 0.82) 100%);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.45rem);
+    transition: opacity 0.35s var(--ease), transform 0.45s var(--ease), visibility 0.35s;
+  }
+  .mergePieceMedia:hover .mergePieceOverlay,
+  .mergePieceMedia:focus .mergePieceOverlay,
+  .mergePieceMedia:focus-within .mergePieceOverlay {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .mergeSideOptions {
+    display: flex;
+    justify-content: center;
+    gap: 0.55rem;
+  }
+  .mergeSideOption {
+    width: clamp(2.5rem, 4vw, 3rem);
+    aspect-ratio: 1;
+    padding: 0.12rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.64);
+    border-radius: 0.55rem;
+    background: rgba(8, 8, 8, 0.82);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .mergeSideOption:hover {
+    transform: translateY(-2px);
+  }
+  .mergeSideOptionActive {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 1px var(--amber);
+  }
+  .mergeSideThumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0.4rem;
+    background: var(--ink-deep);
+  }
+  .mergeColors {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    max-width: 100%;
+  }
+  .mergeColor {
+    width: 1.55rem;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    padding: 0.12rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0.5rem;
+    background: rgba(8, 8, 8, 0.82);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .mergeColor:hover {
+    transform: translateY(-2px);
+  }
+  .mergeColor:hover,
+  .mergeColorActive {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 1px var(--amber);
+  }
+  .mergeSwatch {
+    width: 100%;
+    height: 100%;
+    border-radius: 0.35rem;
+    background: var(--swatch-color);
+  }
+  .mergeColor:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+  .mergeNoColors {
+    aspect-ratio: 2 / 3;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+  }
+  .mergeNoColors p {
+    margin: 0;
+    padding: 1rem;
+    text-align: center;
+  }
+  .mergeEmpty {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--muted);
+  }
+  .mergeClosing {
+    margin: clamp(4rem, 9vw, 8rem) 0 0;
+  }
+  .mergeClosing img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: cover;
+  }
+  @media (max-width: 700px) {
+    .mergeHero {
+      height: clamp(12rem, 45vw, 20rem);
+    }
+    .mergeHeroImage {
+      object-position: right center;
+    }
+    .mergeHeroCopy {
+      width: 68%;
+      padding-left: clamp(1rem, 5vw, 2rem);
+    }
+    .mergeHeroTitle {
+      width: 100%;
+      font-size: clamp(1.35rem, 5vw, 2.2rem);
+    }
+    .mergeBrandName {
+      flex-direction: row;
+      gap: 0.3em;
+      font-size: clamp(0.5rem, 2.6vw, 1.05rem);
+      white-space: nowrap;
+    }
+    .mergePieceGrid {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), min(100%, 300px)));
+      gap: 2.5rem 1rem;
+    }
+  }
+  @media (hover: none) {
+    .mergePieceOverlay {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+  }
+</style>

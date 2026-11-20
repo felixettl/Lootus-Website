@@ -3,7 +3,7 @@ import { structureTool } from 'sanity/structure'
 import { schemaTypes } from './schemaTypes'
 
 // Singleton documents get a fixed id so there is only ever one of each.
-const singletons = ['siteSettings', 'aboutPage']
+const singletons = ['siteSettings', 'aboutPage', 'mergePage']
 
 export default defineConfig({
   name: 'lootus',
@@ -24,6 +24,10 @@ export default defineConfig({
               .title('Über uns (Text)')
               .id('aboutPage')
               .child(S.document().schemaType('aboutPage').documentId('aboutPage')),
+            S.listItem()
+              .title('Merche')
+              .id('mergePage')
+              .child(S.document().schemaType('mergePage').documentId('mergePage')),
             S.documentTypeListItem('eventGallery').title('Event-Fotogalerien'),
             S.divider(),
             S.documentTypeListItem('event').title('Events'),
