@@ -11,6 +11,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/'
     <nav class="desktopNav desktopNavLeft" aria-label="Hauptnavigation">
       <a href="/" class="desktopNavItem" aria-current={path === '/' ? 'page' : undefined}>Start</a>
       <a href="/about" class="desktopNavItem" aria-current={path === '/about' ? 'page' : undefined}>Über uns</a>
+      <a href="/about#mitgliedschaft" class="desktopNavItem">Mitglied werden</a>
     </nav>
     <a href="/" class="logoOnly" aria-label="Lootus Kollektiv">
       <img src="/img/Logo_TransBG.svg" alt="" width="28" height="28" />
@@ -36,10 +37,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/'
     <a href="/sammlungen" class="navMenuItem" style="--i:2" aria-current={path === '/sammlungen' ? 'page' : undefined}><span class="navMenuNum">03</span>Sammlungen</a>
     <a href="/merch" class="navMenuItem" style="--i:3" aria-current={path === '/merch' ? 'page' : undefined}><span class="navMenuNum">04</span>Merch</a>
     <a href="/kontakt" class="navMenuItem" style="--i:4" aria-current={path === '/kontakt' ? 'page' : undefined}><span class="navMenuNum">05</span>Kontakt</a>
+    <a href="/about#mitgliedschaft" class="navMenuItem" style="--i:5"><span class="navMenuNum">06</span>Mitglied werden</a>
   </nav>
   <nav aria-label="Rechtliches" class="navMenuLegal">
-    <a href="/impressum" class="navMenuItem navMenuSmall" style="--i:5">Impressum</a>
-    <a href="/datenschutz" class="navMenuItem navMenuSmall" style="--i:6">Datenschutz</a>
+    <a href="/impressum" class="navMenuItem navMenuSmall" style="--i:6">Impressum</a>
+    <a href="/datenschutz" class="navMenuItem navMenuSmall" style="--i:7">Datenschutz</a>
   </nav>
   </div>
 </div>

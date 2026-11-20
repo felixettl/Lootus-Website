@@ -54,10 +54,10 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
         ) : about.html ? (
           <div class="aboutText"><Fragment set:html={about.html} /></div>
         ) : null}
-        <section class="membership" aria-labelledby="membership-title">
+        <section class="membership" id="mitgliedschaft" aria-labelledby="membership-title">
           <h2 id="membership-title">Werde Mitglied</h2>
           <p>Werde Teil des Lootus Kollektivs und unterstütze unsere Arbeit.</p>
-          <a class="membershipButton" href={applicationUrl} target="_blank" rel="noopener noreferrer">Mitgliedsantrag öffnen</a>
+          <button class="membershipButton" type="button" disabled>Mitgliedsantrag bald verfügbar</button>
           {siteMeta.showMembershipFormEmbed && canEmbedApplication ? (
             <div class="membershipForm" id="mitgliedsantrag-formular">
               <iframe
@@ -223,6 +223,11 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
     font-family: var(--narrow, inherit);
     text-transform: uppercase;
     transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  .membershipButton:disabled {
+    border-color: rgba(255, 255, 255, 0.22);
+    color: var(--muted);
+    cursor: not-allowed;
   }
   .membershipButton:hover,
   .membershipButton:focus-visible {
