@@ -56,11 +56,7 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
         <section class="membership" aria-labelledby="membership-title">
           <h2 id="membership-title">Werde Mitglied</h2>
           <p>Werde Teil des Lootus Kollektivs und unterstütze unsere Arbeit.</p>
-          {canEmbedApplication ? (
-            <a class="membershipButton" href="#mitgliedsantrag-formular">Zum Mitgliedsantrag</a>
-          ) : (
-            <a class="membershipButton" href={applicationUrl} target="_blank" rel="noopener noreferrer">Mitgliedsantrag öffnen</a>
-          )}
+          <a class="membershipButton" href={applicationUrl} target="_blank" rel="noopener noreferrer">Mitgliedsantrag öffnen</a>
           {canEmbedApplication ? (
             <div class="membershipForm" id="mitgliedsantrag-formular">
               <iframe
