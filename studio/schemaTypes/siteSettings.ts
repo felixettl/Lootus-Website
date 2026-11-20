@@ -42,6 +42,13 @@ export const siteSettings = defineType({
       type: 'boolean',
       initialValue: true,
     }),
+    defineField({
+      name: 'statutesPdf',
+      title: 'Satzung (PDF)',
+      description: 'PDF-Datei, die über den Satzung-Link im Footer heruntergeladen wird.',
+      type: 'file',
+      options: { accept: 'application/pdf' },
+    }),
   ],
   preview: { prepare: () => ({ title: 'Startseite & Texte' }) },
 })
