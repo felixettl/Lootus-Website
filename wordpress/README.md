@@ -2,6 +2,8 @@
 
 Diese Struktur enthält ein natives Block Theme (`themes/lootus`) für Full Site Editing sowie das optionale, zunächst funktionslose Plugin `plugins/lootus-core`. WordPress-Core und WooCommerce bleiben außerhalb dieses Repositories; WooCommerce kann seine regulären Shop-Funktionen und Templates verwenden.
 
+Die Shop-, Produkt-, Warenkorb- und Kassenansichten verwenden WooCommerce-Blöcke. Produkte, Bilder, Preise, Bestand und Größen-/Farbvarianten werden in WooCommerce gepflegt; Warenkorb und Checkout nutzen dessen reguläre Abläufe.
+
 ## Theme installieren
 
 1. ZIP-Datei mit dem Theme-Ordner `lootus` und dessen Inhalt erstellen.

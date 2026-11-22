@@ -1,0 +1,44 @@
+<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
+<!-- wp:woocommerce/store-notices /-->
+<!-- wp:group {"tagName":"main","className":"lootus-commerce-shell","layout":{"type":"constrained","contentSize":"1440px"}} -->
+<main class="wp-block-group lootus-commerce-shell">
+	<!-- wp:group {"className":"lootus-shop-hero","layout":{"type":"constrained"}} -->
+	<div class="wp-block-group lootus-shop-hero">
+		<!-- wp:group {"className":"lootus-shop-hero__copy","layout":{"type":"constrained"}} -->
+		<div class="wp-block-group lootus-shop-hero__copy">
+			<!-- wp:heading {"level":1} -->
+			<h1 class="wp-block-heading">MERCH</h1>
+			<!-- /wp:heading -->
+			<!-- wp:paragraph -->
+			<p>by <strong>Lootus Kollektiv</strong></p>
+			<!-- /wp:paragraph -->
+		</div>
+		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:group {"className":"lootus-shop-tools","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
+	<div class="wp-block-group lootus-shop-tools">
+		<!-- wp:woocommerce/product-results-count /-->
+		<!-- wp:woocommerce/catalog-sorting /-->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:woocommerce/product-collection {"query":{"perPage":12,"pages":0,"offset":0,"postType":"product","order":"asc","orderBy":"menu_order","search":"","exclude":[],"inherit":true,"taxQuery":{},"isProductCollectionBlock":true},"displayLayout":{"type":"flex","columns":3,"shrinkColumns":true},"align":"wide","className":"lootus-product-collection"} -->
+	<div class="wp-block-woocommerce-product-collection alignwide lootus-product-collection">
+		<!-- wp:woocommerce/product-template -->
+			<!-- wp:woocommerce/product-image {"showSaleBadge":true,"isDescendentOfQueryLoop":true} /-->
+			<!-- wp:woocommerce/product-title {"isLink":true,"level":2} /-->
+			<!-- wp:woocommerce/product-price {"isDescendentOfQueryLoop":true} /-->
+			<!-- wp:woocommerce/product-button {"isDescendentOfQueryLoop":true} /-->
+		<!-- /wp:woocommerce/product-template -->
+		<!-- wp:query-pagination -->
+			<!-- wp:query-pagination-previous /-->
+			<!-- wp:query-pagination-numbers /-->
+			<!-- wp:query-pagination-next /-->
+		<!-- /wp:query-pagination -->
+	</div>
+	<!-- /wp:woocommerce/product-collection -->
+</main>
+<!-- /wp:group -->
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

@@ -1,6 +1,607 @@
 /*
 Theme Name: Lootus
-Description: Ein natives WordPress Block Theme für Lootus.
+Description: Ein natives WordPress Block Theme für den Lootus-Shop.
 Version: 1.0.0
 Text Domain: lootus
 */
+
+@font-face {
+	font-family: "Venus Rising";
+	src: url("assets/venus-rising-rg.otf") format("opentype");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Bebas Neue";
+	src: url("assets/bebas-neue-v16-latin-regular.woff2") format("woff2");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+
+:root {
+	--lootus-ink: #101010;
+	--lootus-ink-deep: #080808;
+	--lootus-paper: #f3ece0;
+	--lootus-amber: #fba919;
+	--lootus-muted: #a3927b;
+	--lootus-line: rgba(243, 239, 231, 0.12);
+	--lootus-line-soft: rgba(243, 239, 231, 0.08);
+	--lootus-ease: cubic-bezier(0.22, 1, 0.36, 1);
+	--lootus-gutter: clamp(1.25rem, 5vw, 6rem);
+}
+
+html {
+	background: var(--lootus-ink);
+	color-scheme: dark;
+}
+
+body,
+.wp-site-blocks {
+	background: var(--lootus-ink);
+	color: var(--lootus-paper);
+	font-family: Arial, Helvetica, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	overflow-x: hidden;
+}
+
+a {
+	color: var(--lootus-amber);
+	text-underline-offset: 0.2em;
+	transition: color 0.3s var(--lootus-ease);
+}
+
+a:hover {
+	color: #ffc24d;
+}
+
+button,
+input,
+select,
+textarea {
+	font: inherit;
+}
+
+.wp-site-blocks > main {
+	margin-block-start: 0;
+}
+
+.lootus-header {
+	position: absolute;
+	z-index: 20;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 1.2rem var(--lootus-gutter);
+}
+
+.lootus-header-inner {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	width: 100%;
+	max-width: 1440px;
+	margin: 0 auto;
+}
+
+.lootus-brand {
+	display: flex;
+	align-items: center;
+}
+
+.lootus-brand__title {
+	margin: 0;
+	font-family: "Venus Rising", Arial, sans-serif;
+	font-size: 1.35rem;
+	font-weight: 400;
+	letter-spacing: 0.01em;
+}
+
+.lootus-brand__title a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--lootus-paper);
+	text-decoration: none;
+}
+
+.lootus-brand__title a::before {
+	width: 1.75rem;
+	height: 1.75rem;
+	background: url("assets/Logo_TransBG.svg") center / contain no-repeat;
+	content: "";
+}
+
+.lootus-header .wp-block-navigation {
+	justify-self: center;
+	font-size: 0.95rem;
+}
+
+.lootus-header .wp-block-navigation a {
+	color: var(--lootus-paper);
+	text-decoration: none;
+}
+
+.lootus-header .wp-block-navigation a:hover {
+	color: var(--lootus-amber);
+}
+
+.lootus-header .wp-block-woocommerce-mini-cart {
+	justify-self: end;
+}
+
+.lootus-header .wc-block-mini-cart__button {
+	color: var(--lootus-paper);
+}
+
+.lootus-header .wc-block-mini-cart__badge {
+	background: var(--lootus-amber);
+	color: var(--lootus-ink);
+}
+
+.lootus-commerce-shell {
+	width: min(100% - 2 * var(--lootus-gutter), 1440px);
+	margin-inline: auto;
+	padding-top: clamp(5rem, 9vh, 7rem);
+	padding-bottom: clamp(4rem, 9vw, 8rem);
+}
+
+.lootus-shop-hero {
+	position: relative;
+	display: flex;
+	min-height: clamp(13rem, 27vw, 28rem);
+	align-items: center;
+	overflow: hidden;
+	padding: clamp(1.5rem, 4vw, 3.5rem);
+	background:
+		radial-gradient(ellipse at 85% 20%, rgba(251, 169, 25, 0.12), transparent 42%),
+		linear-gradient(115deg, #191715, var(--lootus-ink-deep) 72%);
+	isolation: isolate;
+}
+
+.lootus-shop-hero::after {
+	position: absolute;
+	z-index: -1;
+	inset: 0;
+	background: linear-gradient(90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.035) 72%, transparent);
+	content: "";
+}
+
+.lootus-shop-hero__copy {
+	width: min(66%, 48rem);
+}
+
+.lootus-shop-hero h1 {
+	margin: 0;
+	color: var(--lootus-amber);
+	font-family: "Venus Rising", Arial, sans-serif;
+	font-size: clamp(2rem, 4.8vw, 4.8rem);
+	font-weight: 400;
+	line-height: 0.92;
+	overflow-wrap: anywhere;
+}
+
+.lootus-shop-hero p {
+	margin: 1rem 0 0;
+	color: var(--lootus-muted);
+	font-size: clamp(0.7rem, 1vw, 0.85rem);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.lootus-shop-hero p strong {
+	display: block;
+	margin-top: 0.35rem;
+	color: var(--lootus-paper);
+	font-family: "Venus Rising", Arial, sans-serif;
+	font-size: clamp(1.2rem, 2.4vw, 2.1rem);
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 1.2;
+}
+
+.lootus-shop-tools {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin: clamp(2.5rem, 6vw, 5rem) 0 1.5rem;
+	color: var(--lootus-muted);
+}
+
+.lootus-shop-tools p {
+	margin: 0;
+}
+
+.lootus-shop-tools select,
+.lootus-product-summary select,
+.lootus-product-summary input,
+.wp-block-woocommerce-cart input,
+.wp-block-woocommerce-checkout input,
+.wp-block-woocommerce-checkout select,
+.wp-block-woocommerce-checkout textarea {
+	min-height: 2.75rem;
+	border: 1px solid rgba(244, 237, 226, 0.2);
+	border-radius: 0;
+	background: rgba(255, 255, 255, 0.03);
+	color: var(--lootus-paper);
+}
+
+.lootus-product-collection {
+	margin-block: 0 !important;
+}
+
+.lootus-product-collection .wc-block-product-template {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 2vw, 2rem);
+	padding: 0;
+}
+
+.lootus-product-collection .wc-block-product {
+	min-width: 0;
+	overflow: hidden;
+	border: 1px solid var(--lootus-line-soft);
+	background: rgba(255, 255, 255, 0.01);
+	transition: border-color 0.45s var(--lootus-ease), background-color 0.45s var(--lootus-ease);
+}
+
+.lootus-product-collection .wc-block-product:hover {
+	border-color: var(--lootus-amber);
+	background: rgba(251, 169, 25, 0.035);
+}
+
+.lootus-product-collection .wc-block-components-product-image {
+	position: relative;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	margin: 0;
+	background: var(--lootus-ink-deep);
+}
+
+.lootus-product-collection .wc-block-components-product-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.8s var(--lootus-ease);
+}
+
+.lootus-product-collection .wc-block-product:hover .wc-block-components-product-image img {
+	transform: scale(1.035);
+}
+
+.lootus-product-collection .wc-block-components-product-image .wc-block-components-product-sale-badge {
+	top: 0.75rem;
+	right: 0.75rem;
+	border: 1px solid var(--lootus-amber);
+	border-radius: 0;
+	background: var(--lootus-ink);
+	color: var(--lootus-amber);
+}
+
+.lootus-product-collection .wc-block-components-product-name {
+	display: block;
+	margin: 0;
+	padding: 0.8rem 0.9rem 0;
+	color: var(--lootus-paper);
+	font-family: "Venus Rising", Arial, sans-serif;
+	font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.lootus-product-collection .wc-block-components-product-price {
+	padding: 0.25rem 0.9rem 0;
+	color: var(--lootus-amber);
+	font-family: "Bebas Neue", "Arial Narrow", Arial, sans-serif;
+	font-size: 1.1rem;
+}
+
+.lootus-product-collection .wp-block-woocommerce-product-button {
+	margin: 0;
+	padding: 0.7rem 0.9rem 0.9rem;
+}
+
+.lootus-product-collection .wp-block-woocommerce-product-button a,
+.wp-block-woocommerce-cart .wc-block-cart__submit-button,
+.wp-block-woocommerce-checkout .wc-block-components-checkout-place-order-button,
+.lootus-product-summary .single_add_to_cart_button {
+	display: inline-flex;
+	min-height: 2.75rem;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--lootus-amber);
+	border-radius: 0;
+	background: transparent;
+	color: var(--lootus-amber);
+	font-size: 0.82rem;
+	letter-spacing: 0.08em;
+	text-decoration: none;
+	text-transform: uppercase;
+	transition: background 0.3s var(--lootus-ease), color 0.3s var(--lootus-ease);
+}
+
+.lootus-product-collection .wp-block-woocommerce-product-button a:hover,
+.wp-block-woocommerce-cart .wc-block-cart__submit-button:hover,
+.wp-block-woocommerce-checkout .wc-block-components-checkout-place-order-button:hover,
+.lootus-product-summary .single_add_to_cart_button:hover {
+	background: var(--lootus-amber);
+	color: var(--lootus-ink);
+}
+
+.lootus-product-collection .wp-block-query-pagination {
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+	margin-top: 3rem;
+	color: var(--lootus-paper);
+}
+
+.lootus-product-collection .wp-block-query-pagination a {
+	color: var(--lootus-paper);
+	text-decoration: none;
+}
+
+.lootus-product-collection .wp-block-query-pagination a:hover,
+.lootus-product-collection .wp-block-query-pagination .current {
+	color: var(--lootus-amber);
+}
+
+.lootus-breadcrumbs {
+	margin-bottom: 2rem;
+	color: var(--lootus-muted);
+}
+
+.lootus-product-layout {
+	gap: clamp(2rem, 6vw, 6rem);
+	align-items: start;
+}
+
+.lootus-product-layout .wp-block-column {
+	min-width: 0;
+}
+
+.lootus-product-layout .woocommerce-product-gallery,
+.lootus-product-layout .wp-block-woocommerce-product-image-gallery {
+	width: 100%;
+}
+
+.lootus-product-summary {
+	padding-top: clamp(0rem, 3vw, 2rem);
+}
+
+.lootus-product-summary h1 {
+	margin: 0 0 1rem;
+	font-size: clamp(1.8rem, 3.5vw, 3.3rem);
+	line-height: 1.05;
+	text-transform: uppercase;
+}
+
+.lootus-product-summary .wc-block-components-product-price,
+.lootus-product-summary .price {
+	color: var(--lootus-amber);
+	font-family: "Bebas Neue", "Arial Narrow", Arial, sans-serif;
+	font-size: 1.5rem;
+}
+
+.lootus-product-summary .woocommerce-product-details__short-description,
+.lootus-product-summary .wc-block-components-product-summary {
+	color: rgba(244, 237, 226, 0.82);
+	line-height: 1.65;
+}
+
+.lootus-product-summary .variations {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.lootus-product-summary .variations th,
+.lootus-product-summary .variations td {
+	padding: 0.75rem 0;
+	text-align: left;
+}
+
+.lootus-product-summary .variations label {
+	color: var(--lootus-muted);
+	font-size: 0.72rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.lootus-product-summary .single_add_to_cart_button {
+	padding: 0.75rem 1.4rem;
+}
+
+.lootus-product-summary .stock,
+.lootus-product-summary .woocommerce-variation-availability {
+	color: var(--lootus-muted);
+}
+
+.lootus-commerce-shell > h1,
+.lootus-commerce-shell .wp-block-post-title {
+	margin-bottom: 2rem;
+	font-size: clamp(2rem, 4vw, 3.5rem);
+	text-transform: uppercase;
+}
+
+.wp-block-woocommerce-cart,
+.wp-block-woocommerce-checkout {
+	color: var(--lootus-paper);
+}
+
+.wp-block-woocommerce-cart a,
+.wp-block-woocommerce-checkout a {
+	color: var(--lootus-amber);
+}
+
+.wp-block-woocommerce-cart .wc-block-cart-items,
+.wp-block-woocommerce-cart .wc-block-components-totals-wrapper,
+.wp-block-woocommerce-checkout .wc-block-components-order-summary,
+.wp-block-woocommerce-checkout .wc-block-components-checkout-step {
+	border-color: var(--lootus-line);
+}
+
+.wp-block-woocommerce-cart .wc-block-components-product-name,
+.wp-block-woocommerce-checkout .wc-block-components-product-name {
+	color: var(--lootus-paper);
+}
+
+.wp-block-woocommerce-cart .wc-block-components-totals-item__value,
+.wp-block-woocommerce-checkout .wc-block-components-totals-item__value {
+	color: var(--lootus-amber);
+}
+
+.lootus-footer {
+	width: min(100% - 2 * var(--lootus-gutter), 1440px);
+	margin: 0 auto;
+	padding: 0 0 2rem;
+}
+
+.lootus-footer__rule {
+	height: 1px;
+	margin-bottom: 2rem;
+	background: var(--lootus-line);
+}
+
+.lootus-footer__inner,
+.lootus-footer__bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem 2rem;
+}
+
+.lootus-footer__brand {
+	margin: 0;
+	font-family: "Venus Rising", Arial, sans-serif;
+	font-size: 1.1rem;
+}
+
+.lootus-footer__bottom {
+	margin-top: 2rem;
+	color: var(--lootus-muted);
+	font-size: 0.78rem;
+}
+
+.lootus-footer__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.lootus-footer__links a {
+	color: var(--lootus-paper);
+	text-decoration: none;
+}
+
+.lootus-footer__links a:hover {
+	color: var(--lootus-amber);
+}
+
+@keyframes lootus-rise {
+	from {
+		opacity: 0;
+		transform: translateY(1rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.lootus-product-collection .wc-block-product {
+		animation: lootus-rise 0.7s var(--lootus-ease) both;
+	}
+
+	.lootus-product-collection .wc-block-product:nth-child(3n + 2) {
+		animation-delay: 0.08s;
+	}
+
+	.lootus-product-collection .wc-block-product:nth-child(3n + 3) {
+		animation-delay: 0.16s;
+	}
+}
+
+@media (max-width: 780px) {
+	.lootus-header {
+		position: fixed;
+		padding-block: 0.6rem;
+		background: rgba(16, 16, 16, 0.92);
+		backdrop-filter: blur(12px);
+	}
+
+	.lootus-header-inner {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.lootus-header .wp-block-navigation {
+		order: 3;
+	}
+
+	.lootus-header .wp-block-navigation__responsive-container.is-menu-open {
+		background: rgba(4, 7, 14, 0.97);
+		color: var(--lootus-paper);
+	}
+
+	.lootus-commerce-shell {
+		padding-top: 5rem;
+	}
+
+	.lootus-shop-hero {
+		min-height: clamp(12rem, 45vw, 20rem);
+	}
+
+	.lootus-shop-hero__copy {
+		width: 75%;
+	}
+
+	.lootus-shop-hero h1 {
+		font-size: clamp(1.6rem, 7vw, 2.8rem);
+	}
+
+	.lootus-product-collection .wc-block-product-template {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 2.5rem 1rem;
+	}
+
+	.lootus-product-layout {
+		display: block;
+	}
+
+	.lootus-product-layout > .wp-block-column + .wp-block-column {
+		margin-top: 2rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.lootus-shop-tools,
+	.lootus-footer__inner,
+	.lootus-footer__bottom {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.lootus-product-collection .wc-block-product-template {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		scroll-behavior: auto !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
