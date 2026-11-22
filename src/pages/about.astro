@@ -3,14 +3,12 @@ import Base from '../layouts/Base.astro'
 import TopBar from '../components/TopBar.astro'
 import Footer from '../components/Footer.astro'
 import { fetchAbout } from '../data/about'
-import { fetchSiteMeta } from '../data/site'
 import { imageUrl } from '../lib/sanity'
 import '../styles/global.css'
 import '../styles/afterglow.css'
 
-const [about, siteMeta] = await Promise.all([fetchAbout(), fetchSiteMeta()])
+const about = await fetchAbout()
 const applicationUrl = 'https://easyverein.com/public/LKO/applicationform/31518'
-const canEmbedApplication = Astro.url.protocol === 'https:'
 ---
 
 <Base description={about.seoDescription || undefined}>
@@ -57,18 +55,9 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
         <section class="membership" id="mitgliedschaft" aria-labelledby="membership-title">
           <h2 id="membership-title">Werde Mitglied</h2>
           <p>Werde Teil des Lootus Kollektivs und unterstütze unsere Arbeit.</p>
-          <button class="membershipButton" type="button" disabled>Mitgliedsantrag bald verfügbar</button>
-          {siteMeta.showMembershipFormEmbed && canEmbedApplication ? (
-            <div class="membershipForm" id="mitgliedsantrag-formular">
-              <iframe
-                src={`${applicationUrl}?iframe=True`}
-                title="Aufnahmeformular: Mitgliedsantrag"
-                loading="lazy"
-              ></iframe>
-            </div>
-          ) : siteMeta.showMembershipFormEmbed ? (
-            <p class="membershipFallback">Das Formular wird in einem neuen Tab auf easyVerein geöffnet.</p>
-          ) : null}
+          <a class="membershipButton" href={applicationUrl} target="_blank" rel="noopener noreferrer">
+            Mitgliedsantrag ausfüllen
+          </a>
           <small class="membershipCredit">
             <a href="https://easyverein.com" title="Vereinsverwaltungssoftware easyVerein" target="_blank" rel="noopener noreferrer">Vereinsverwaltung von easyVerein</a>
           </small>
@@ -224,29 +213,10 @@ const canEmbedApplication = Astro.url.protocol === 'https:'
     text-transform: uppercase;
     transition: color 0.2s ease, background-color 0.2s ease;
   }
-  .membershipButton:disabled {
-    border-color: rgba(255, 255, 255, 0.22);
-    color: var(--muted);
-    cursor: not-allowed;
-  }
   .membershipButton:hover,
   .membershipButton:focus-visible {
     background: var(--amber);
     color: #101010;
-  }
-  .membershipForm {
-    scroll-margin-top: 1.5rem;
-    padding: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: #1d1d1d;
-  }
-  .membershipForm iframe {
-    display: block;
-    width: 100%;
-    min-height: 800px;
-    border: 0;
-    background: #101010;
-    filter: invert(1) hue-rotate(180deg);
   }
   .membershipCredit {
     display: block;
