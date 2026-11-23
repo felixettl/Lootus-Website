@@ -46,6 +46,21 @@ const { events } = Astro.props
                 {ev.title}
                 <span class="rowUnderline" aria-hidden="true"></span>
               </span>
+              <details class="rowLineup">
+                <summary>
+                  <span>Line-up</span>
+                  <span class="rowLineupCount">
+                    {ev.lineup.length > 0 ? `${ev.lineup.length} Acts` : 'folgt'}
+                  </span>
+                </summary>
+                {ev.lineup.length > 0 ? (
+                  <ul class="rowLineupActs">
+                    {ev.lineup.map((act) => <li>{act}</li>)}
+                  </ul>
+                ) : (
+                  <p class="rowLineupPending">Das Line-up wird bald bekannt gegeben.</p>
+                )}
+              </details>
               <span class="rowDetails">
                 <span class="rowDetailsInner">
                   <span class="rowMeta">
@@ -89,7 +104,7 @@ const { events } = Astro.props
     rows.forEach((row) => {
       row.addEventListener('click', (e) => {
         const target = e.target as HTMLElement
-        if (target.closest('a')) return
+        if (target.closest('a, details')) return
         const thumb = target.closest<HTMLElement>('.rowThumb')
         if (thumb && mobile.matches && row.classList.contains('isOpen')) {
           dialogImg.src = thumb.dataset.full ?? ''

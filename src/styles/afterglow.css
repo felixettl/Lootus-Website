@@ -636,6 +636,52 @@ html.js [data-animate="lines"].visible .lineMask > span {
 .row.isOpen .rowDetails {
   grid-template-rows: 1fr;
 }
+.rowLineup {
+  margin-top: 0.9rem;
+  font-family: var(--sans);
+}
+.rowLineup summary {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rowLineup summary::-webkit-details-marker { display: none; }
+.rowLineup summary::after {
+  content: '+';
+  color: var(--amber);
+  font-size: 0.9rem;
+}
+.rowLineup[open] summary::after { content: '-'; }
+.rowLineup summary:focus-visible {
+  outline: 1px solid var(--amber);
+  outline-offset: 0.3rem;
+}
+.rowLineupCount { color: var(--amber); }
+.rowLineupActs {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rowLineupActs li {
+  color: var(--text);
+  font-size: var(--caption-size);
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+.rowLineupPending {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: var(--caption-size);
+}
 .rowMeta {
   display: block;
   margin-top: 0.85rem;
