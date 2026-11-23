@@ -757,9 +757,14 @@ html.js [data-animate="lines"].visible .lineMask > span {
   .row { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 }
 
-/* Mobile: opened row keeps the small poster; tapping it shows fullscreen. */
+/* Mobile: tapping an event enlarges and colors its poster; tapping it again shows fullscreen. */
 @media (max-width: 680px) {
+  .row.isOpen { --thumb: clamp(90px, 30vw, 130px); }
   .row.isOpen .rowThumb { cursor: zoom-in; }
+  .row.isOpen .rowThumbImg .photoImg {
+    filter: none;
+    transform: scale(1.06);
+  }
 }
 
 .posterDialog {
