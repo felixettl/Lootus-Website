@@ -4,7 +4,6 @@ Description: Ein natives WordPress Block Theme für den Lootus-Shop.
 Version: 1.0.0
 Text Domain: lootus
 */
-
 @font-face {
 	font-family: "Venus Rising";
 	src: url("assets/venus-rising-rg.otf") format("opentype");
@@ -154,27 +153,40 @@ textarea {
 
 .lootus-shop-hero {
 	position: relative;
-	display: flex;
-	min-height: clamp(13rem, 27vw, 28rem);
-	align-items: center;
+	left: 50%;
+	width: calc(100vw - 2 * var(--lootus-gutter));
+	max-width: none;
+	height: clamp(13rem, 27vw, 28rem);
+	transform: translateX(-50%);
 	overflow: hidden;
-	padding: clamp(1.5rem, 4vw, 3.5rem);
-	background:
-		radial-gradient(ellipse at 85% 20%, rgba(251, 169, 25, 0.12), transparent 42%),
-		linear-gradient(115deg, #191715, var(--lootus-ink-deep) 72%);
+	display: flex;
+	align-items: center;
+	background: var(--lootus-ink-deep);
 	isolation: isolate;
 }
 
-.lootus-shop-hero::after {
+.lootus-shop-hero__image,
+.lootus-shop-hero__shade {
 	position: absolute;
-	z-index: -1;
 	inset: 0;
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.035) 72%, transparent);
-	content: "";
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+.lootus-shop-hero__image {
+	object-fit: cover;
+}
+
+.lootus-shop-hero__shade {
+	background: linear-gradient(90deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.08) 72%, transparent);
 }
 
 .lootus-shop-hero__copy {
-	width: min(66%, 48rem);
+	position: relative;
+	z-index: 1;
+	width: 66%;
+	padding-left: clamp(1.5rem, 4vw, 3.5rem);
 }
 
 .lootus-shop-hero h1 {
@@ -187,23 +199,35 @@ textarea {
 	overflow-wrap: anywhere;
 }
 
-.lootus-shop-hero p {
-	margin: 1rem 0 0;
+.lootus-shop-brand {
+	padding: 1rem 0 0;
+	text-align: left;
+}
+
+.lootus-shop-brand__by {
+	display: block;
+	margin-bottom: 0.35rem;
 	color: var(--lootus-muted);
+	font-family: Arial, Helvetica, sans-serif;
 	font-size: clamp(0.7rem, 1vw, 0.85rem);
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
 }
 
-.lootus-shop-hero p strong {
-	display: block;
-	margin-top: 0.35rem;
+.lootus-shop-brand__name {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
 	color: var(--lootus-paper);
 	font-family: "Venus Rising", Arial, sans-serif;
 	font-size: clamp(1.2rem, 2.4vw, 2.1rem);
 	font-weight: 400;
-	letter-spacing: 0;
 	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+.lootus-shop-brand__name span + span {
+	color: var(--lootus-amber);
 }
 
 .lootus-shop-tools {
@@ -239,7 +263,8 @@ textarea {
 
 .lootus-product-collection .wc-block-product-template {
 	display: grid !important;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), min(100%, 300px)));
+	justify-content: center;
 	gap: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 2vw, 2rem);
 	padding: 0;
 }
@@ -351,6 +376,29 @@ textarea {
 .lootus-product-collection .wp-block-query-pagination a:hover,
 .lootus-product-collection .wp-block-query-pagination .current {
 	color: var(--lootus-amber);
+}
+
+.lootus-merch-order-cta {
+	margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+	color: var(--lootus-muted);
+	line-height: 1.6;
+	text-align: center;
+}
+
+.lootus-merch-order-cta a {
+	color: var(--lootus-amber);
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+.lootus-merch-closing {
+	margin: clamp(4rem, 9vw, 8rem) 0 0;
+}
+
+.lootus-merch-closing img {
+	width: 100%;
+	max-height: 70vh;
+	object-fit: cover;
 }
 
 .lootus-breadcrumbs {
@@ -557,19 +605,31 @@ textarea {
 	}
 
 	.lootus-shop-hero {
-		min-height: clamp(12rem, 45vw, 20rem);
+		height: clamp(12rem, 45vw, 20rem);
+	}
+
+	.lootus-shop-hero__image {
+		object-position: right center;
 	}
 
 	.lootus-shop-hero__copy {
-		width: 75%;
+		width: 68%;
+		padding-left: clamp(1rem, 5vw, 2rem);
 	}
 
 	.lootus-shop-hero h1 {
-		font-size: clamp(1.6rem, 7vw, 2.8rem);
+		font-size: clamp(1.35rem, 5vw, 2.2rem);
+	}
+
+	.lootus-shop-brand__name {
+		flex-direction: row;
+		gap: 0.3em;
+		font-size: clamp(0.5rem, 2.6vw, 1.05rem);
+		white-space: nowrap;
 	}
 
 	.lootus-product-collection .wc-block-product-template {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), min(100%, 300px)));
 		gap: 2.5rem 1rem;
 	}
 
@@ -590,9 +650,6 @@ textarea {
 		flex-direction: column;
 	}
 
-	.lootus-product-collection .wc-block-product-template {
-		grid-template-columns: minmax(0, 1fr);
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {

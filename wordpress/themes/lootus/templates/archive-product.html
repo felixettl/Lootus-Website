@@ -2,19 +2,20 @@
 <!-- wp:woocommerce/store-notices /-->
 <!-- wp:group {"tagName":"main","className":"lootus-commerce-shell","layout":{"type":"constrained","contentSize":"1440px"}} -->
 <main class="wp-block-group lootus-commerce-shell">
-	<!-- wp:group {"className":"lootus-shop-hero","layout":{"type":"constrained"}} -->
-	<div class="wp-block-group lootus-shop-hero">
-		<!-- wp:group {"className":"lootus-shop-hero__copy","layout":{"type":"constrained"}} -->
-		<div class="wp-block-group lootus-shop-hero__copy">
+	<!-- wp:group {"tagName":"section","className":"lootus-shop-hero","layout":{"type":"constrained"}} -->
+	<section class="wp-block-group lootus-shop-hero" aria-label="Merch">
+		<img class="lootus-shop-hero__image" src="https://cdn.sanity.io/images/zgboj0ia/production/76fe855475dcbfc5940679781783831bf8195371-2048x768.png" alt="" fetchpriority="high" />
+		<div class="lootus-shop-hero__shade" aria-hidden="true"></div>
+		<div class="lootus-shop-hero__copy">
 			<!-- wp:heading {"level":1} -->
-			<h1 class="wp-block-heading">MERCH</h1>
+			<h1 class="wp-block-heading">Made for the nights that stay</h1>
 			<!-- /wp:heading -->
-			<!-- wp:paragraph -->
-			<p>by <strong>Lootus Kollektiv</strong></p>
-			<!-- /wp:paragraph -->
+			<header class="lootus-shop-brand">
+				<span class="lootus-shop-brand__by">by</span>
+				<p class="lootus-shop-brand__name"><span>Lootus</span><span>Kollektiv</span></p>
+			</header>
 		</div>
-		<!-- /wp:group -->
-	</div>
+	</section>
 	<!-- /wp:group -->
 
 	<!-- wp:group {"className":"lootus-shop-tools","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
@@ -39,6 +40,14 @@
 		<!-- /wp:query-pagination -->
 	</div>
 	<!-- /wp:woocommerce/product-collection -->
+
+	<!-- wp:paragraph {"className":"lootus-merch-order-cta"} -->
+	<p class="lootus-merch-order-cta">Du möchtest Merch bestellen? <a href="https://lootuskollektiv.de/kontakt?topic=Merch%20bestellen#formular">Hier anfragen.</a></p>
+	<!-- /wp:paragraph -->
+
+	<!-- wp:image {"sizeSlug":"full","linkDestination":"none","className":"lootus-merch-closing"} -->
+	<figure class="wp-block-image size-full lootus-merch-closing"><img src="https://cdn.sanity.io/images/zgboj0ia/production/8096de38a4c1eaaa129b9cc83c62ae4018e9040-1448x1086.png" alt="" loading="lazy" /></figure>
+	<!-- /wp:image -->
 </main>
 <!-- /wp:group -->
 <!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

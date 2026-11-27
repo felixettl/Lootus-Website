@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
+    "./plugins/lootus-core"
+  ],
+  "themes": [
+    "./themes/lootus"
+  ],
+  "config": {
+    "WP_DEBUG": true,
+    "WP_DEBUG_LOG": true,
+    "WP_DEBUG_DISPLAY": false,
+    "WP_ENVIRONMENT_TYPE": "local"
+  },
+  "port": 8888,
+  "testsEnvironment": false
+}

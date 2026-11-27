@@ -1,0 +1,11 @@
+{
+  "name": "lootus-wordpress-shop",
+  "private": true,
+  "scripts": {
+    "dev": "wp-env start && wp-env run cli wp theme activate lootus",
+    "stop": "wp-env stop"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^12.2.0"
+  }
+}
