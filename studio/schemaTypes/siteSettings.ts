@@ -49,6 +49,13 @@ export const siteSettings = defineType({
       type: 'file',
       options: { accept: 'application/pdf' },
     }),
+    defineField({
+      name: 'feeSchedulePdf',
+      title: 'Beitragsordnung (PDF)',
+      description: 'PDF-Datei, die über den Button "Beitragsordnung" beim Mitgliedsantrag geöffnet wird.',
+      type: 'file',
+      options: { accept: 'application/pdf' },
+    }),
   ],
   preview: { prepare: () => ({ title: 'Startseite & Texte' }) },
 })

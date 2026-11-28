@@ -41,6 +41,7 @@ export interface SiteMeta {
   footerTagline: string
   showMembershipFormEmbed: boolean
   statutesPdfUrl: string
+  feeSchedulePdfUrl: string
 }
 
 const fallbackMeta: SiteMeta = {
@@ -49,12 +50,13 @@ const fallbackMeta: SiteMeta = {
   footerTagline: 'Konstanz',
   showMembershipFormEmbed: true,
   statutesPdfUrl: '',
+  feeSchedulePdfUrl: '',
 }
 
 export const fetchSiteMeta = createCache<SiteMeta>(async (previous) => {
   try {
     const row = await sanity.fetch<Partial<SiteMeta> | null>(
-      `*[_id == "siteSettings"][0]{ seoDescription, footerTagline, showMembershipFormEmbed, "statutesPdfUrl": statutesPdf.asset->url }`,
+      `*[_id == "siteSettings"][0]{ seoDescription, footerTagline, showMembershipFormEmbed, "statutesPdfUrl": statutesPdf.asset->url, "feeSchedulePdfUrl": feeSchedulePdf.asset->url }`,
     )
     if (!row) return previous ?? fallbackMeta
     return {
@@ -62,6 +64,7 @@ export const fetchSiteMeta = createCache<SiteMeta>(async (previous) => {
       footerTagline: row.footerTagline || fallbackMeta.footerTagline,
       showMembershipFormEmbed: row.showMembershipFormEmbed ?? fallbackMeta.showMembershipFormEmbed,
       statutesPdfUrl: row.statutesPdfUrl || fallbackMeta.statutesPdfUrl,
+      feeSchedulePdfUrl: row.feeSchedulePdfUrl || fallbackMeta.feeSchedulePdfUrl,
     }
   } catch (err) {
     console.error('[sanity] site meta fetch failed:', err)

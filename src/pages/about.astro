@@ -3,11 +3,13 @@ import Base from '../layouts/Base.astro'
 import TopBar from '../components/TopBar.astro'
 import Footer from '../components/Footer.astro'
 import { fetchAbout } from '../data/about'
+import { fetchSiteMeta } from '../data/site'
 import { imageUrl } from '../lib/sanity'
 import '../styles/global.css'
 import '../styles/afterglow.css'
 
 const about = await fetchAbout()
+const { feeSchedulePdfUrl } = await fetchSiteMeta()
 const applicationUrl = 'https://easyverein.com/public/LKO/applicationform/31518'
 ---
 
@@ -55,9 +57,16 @@ const applicationUrl = 'https://easyverein.com/public/LKO/applicationform/31518'
         <section class="membership" id="mitgliedschaft" aria-labelledby="membership-title">
           <h2 id="membership-title">Werde Mitglied</h2>
           <p>Werde Teil des Lootus Kollektivs und unterstütze unsere Arbeit.</p>
-          <a class="membershipButton" href={applicationUrl} target="_blank" rel="noopener noreferrer">
-            Mitgliedsantrag ausfüllen
-          </a>
+          <div class="membershipActions">
+            <a class="membershipButton" href={applicationUrl} target="_blank" rel="noopener noreferrer">
+              Mitgliedsantrag ausfüllen
+            </a>
+            {feeSchedulePdfUrl && (
+              <a class="membershipButton" href={feeSchedulePdfUrl} target="_blank" rel="noopener noreferrer">
+                Beitragsordnung
+              </a>
+            )}
+          </div>
           <small class="membershipCredit">
             <a href="https://easyverein.com" title="Vereinsverwaltungssoftware easyVerein" target="_blank" rel="noopener noreferrer">Vereinsverwaltung von easyVerein</a>
           </small>
@@ -200,12 +209,18 @@ const applicationUrl = 'https://easyverein.com/public/LKO/applicationform/31518'
     color: var(--text-soft);
     line-height: 1.7;
   }
+  .membershipActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
   .membershipButton {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 2.75rem;
-    margin-bottom: 2rem;
     padding: 0.7rem 1.25rem;
     border: 1px solid var(--amber);
     color: var(--amber);
