@@ -1,10 +1,13 @@
-name: Deploy WordPress Theme
+name: Deploy WordPress Theme and Config
 
 on:
   push:
     branches: [main]
     paths:
       - wordpress/themes/lootus/**
+      - wordpress/mu-plugins/**
+      - wordpress/.wp-env.json
+      - .github/workflows/deploy-wordpress.yml
 
 permissions:
   contents: read
@@ -40,5 +43,7 @@ jobs:
           set net:max-retries 2
           set net:timeout 20
           mirror --reverse --delete --parallel=4 --verbose wordpress/themes/lootus/ /public_html/shop/wp-content/themes/lootus/
+          mkdir -p /public_html/shop/wp-content/mu-plugins
+          put wordpress/mu-plugins/lootus-wp-config.php -o /public_html/shop/wp-content/mu-plugins/lootus-wp-config.php
           bye
           EOF

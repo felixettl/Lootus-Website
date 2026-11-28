@@ -4,28 +4,43 @@
 	<hr class="wp-block-separator has-alpha-channel-opacity lootus-footer__rule"/>
 	<!-- /wp:separator -->
 
-	<!-- wp:group {"className":"lootus-footer__inner","layout":{"type":"flex","justifyContent":"space-between"}} -->
-	<div class="wp-block-group lootus-footer__inner">
-		<!-- wp:paragraph {"className":"lootus-footer__brand"} -->
-		<p class="lootus-footer__brand">Lootus Kollektiv e.V.</p>
-		<!-- /wp:paragraph -->
-
-		<!-- wp:paragraph -->
-		<p><a href="https://www.instagram.com/lootus.kollektiv/" target="_blank" rel="noopener noreferrer">@lootus.kollektiv</a></p>
-		<!-- /wp:paragraph -->
+	<!-- wp:html -->
+	<div class="lootus-footer__inner">
+		<div class="lootus-footer__brand">
+			<a class="lootus-footer__wordmark" href="https://lootuskollektiv.de/" aria-label="Lootus Kollektiv">
+				<img src="/wp-content/themes/lootus/assets/Logo_TransBG.svg" alt="" width="34" height="34" />
+				<span>Lootus</span>
+			</a>
+			<span class="lootus-footer__legal">Lootus Kollektiv e.V.</span>
+		</div>
+		<a class="lootus-footer__instagram" href="https://www.instagram.com/lootus.kollektiv/" target="_blank" rel="noopener noreferrer" aria-label="Lootus Kollektiv auf Instagram">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+				<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+				<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+			</svg>
+			<span>@lootus.kollektiv</span>
+		</a>
 	</div>
-	<!-- /wp:group -->
+	<!-- /wp:html -->
 
 	<!-- wp:group {"className":"lootus-footer__bottom","layout":{"type":"flex","justifyContent":"space-between"}} -->
 	<div class="wp-block-group lootus-footer__bottom">
-		<!-- wp:paragraph -->
-		<p>© Lootus Kollektiv</p>
-		<!-- /wp:paragraph -->
+		<!-- wp:lootus/footer-copyright /-->
+		<!-- wp:lootus/footer-tagline /-->
 
-		<!-- wp:navigation {"ariaLabel":"Rechtliches","className":"lootus-footer__links","layout":{"type":"flex","justifyContent":"right"}} -->
-			<!-- wp:navigation-link {"label":"Impressum","url":"https://lootuskollektiv.de/impressum","kind":"custom","isTopLevelLink":true} /-->
-			<!-- wp:navigation-link {"label":"Datenschutz","url":"https://lootuskollektiv.de/datenschutz","kind":"custom","isTopLevelLink":true} /-->
-		<!-- /wp:navigation -->
+		<!-- wp:html -->
+		<nav class="lootus-footer__links" aria-label="Rechtliches">
+			<a href="https://lootuskollektiv.de/impressum">Impressum</a>
+			<a href="https://lootuskollektiv.de/datenschutz">Datenschutz</a>
+			<a href="https://lootuskollektiv.de/api/satzung">Satzung</a>
+			<a href="/agb/">AGB</a>
+			<a href="/widerrufsbelehrung/">Widerruf</a>
+			<a href="/muster-widerrufsformular/">Widerrufsformular</a>
+			<a href="/versand-zahlung/">Versand &amp; Zahlung</a>
+			<a href="/datenschutzhinweise-shop/">Datenschutz Shop</a>
+		</nav>
+		<!-- /wp:html -->
 	</div>
 	<!-- /wp:group -->
 </div>

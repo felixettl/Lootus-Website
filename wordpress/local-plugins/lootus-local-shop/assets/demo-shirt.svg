@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title">
+  <title id="title">Local demo shirt</title>
+  <rect width="800" height="1000" fill="#101010"/>
+  <path d="M260 150 350 110h100l90 40 115 85-70 105-65-40v470H280V300l-65 40-70-105z" fill="#202020" stroke="#fba919" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M350 110c0 55 20 85 50 85s50-30 50-85" fill="none" stroke="#fba919" stroke-width="8"/>
+  <text x="400" y="520" fill="#f3ece0" font-family="Arial,sans-serif" font-size="42" text-anchor="middle" letter-spacing="3">LOCAL DEMO</text>
+  <text x="400" y="580" fill="#fba919" font-family="Arial,sans-serif" font-size="26" text-anchor="middle" letter-spacing="2">TEST PRODUCT</text>
+</svg>

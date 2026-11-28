@@ -2,7 +2,10 @@
   "name": "lootus-wordpress-shop",
   "private": true,
   "scripts": {
-    "dev": "wp-env start && wp-env run cli wp theme activate lootus",
+    "dev": "wp-env start && wp-env run cli wp theme activate lootus && wp-env run cli wp lootus-config apply && npm run local:translations && wp-env run cli wp lootus-local seed",
+    "config:apply": "wp-env run cli wp lootus-config apply",
+    "local:translations": "wp-env run cli sh -c 'PAGER=cat WP_CLI_PAGER=cat wp language core install de_DE --activate && PAGER=cat WP_CLI_PAGER=cat wp language plugin install woocommerce de_DE && PAGER=cat WP_CLI_PAGER=cat wp language plugin install woocommerce-gateway-stripe de_DE'",
+    "local:seed": "wp-env run cli wp lootus-local seed",
     "stop": "wp-env stop"
   },
   "devDependencies": {

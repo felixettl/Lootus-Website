@@ -1,17 +1,45 @@
-<!-- wp:group {"className":"lootus-header-inner","layout":{"type":"constrained","contentSize":"1440px"}} -->
-<div class="wp-block-group lootus-header-inner">
-	<!-- wp:heading {"level":2,"className":"lootus-brand__title"} -->
-	<h2 class="wp-block-heading lootus-brand__title"><a href="https://lootuskollektiv.de/">Lootus</a></h2>
-	<!-- /wp:heading -->
-
-	<!-- wp:navigation {"overlayMenu":"mobile","ariaLabel":"Hauptnavigation","layout":{"type":"flex","justifyContent":"center"}} -->
-		<!-- wp:navigation-link {"label":"Start","url":"https://lootuskollektiv.de/","kind":"custom","isTopLevelLink":true} /-->
-		<!-- wp:navigation-link {"label":"Über uns","url":"https://lootuskollektiv.de/about","kind":"custom","isTopLevelLink":true} /-->
-		<!-- wp:navigation-link {"label":"Sammlungen","url":"https://lootuskollektiv.de/sammlungen","kind":"custom","isTopLevelLink":true} /-->
-		<!-- wp:navigation-link {"label":"Shop","url":"/","kind":"custom","isTopLevelLink":true} /-->
-		<!-- wp:navigation-link {"label":"Kontakt","url":"https://lootuskollektiv.de/kontakt","kind":"custom","isTopLevelLink":true} /-->
-	<!-- /wp:navigation -->
-
+<!-- wp:group {"tagName":"header","className":"lootus-header","layout":{"type":"default"}} -->
+<header class="wp-block-group lootus-header">
+	<!-- wp:html -->
+	<div class="lootus-topbar">
+		<div class="lootus-nav">
+			<a class="lootus-mobile-wordmark" href="https://lootuskollektiv.de/" aria-label="Lootus Kollektiv">
+				<span class="lootus-wordmark-mark" aria-hidden="true"></span>
+				<span>Lootus</span>
+			</a>
+			<nav class="lootus-desktop-nav lootus-desktop-nav-left" aria-label="Hauptnavigation">
+				<a href="https://lootuskollektiv.de/">Start</a>
+				<a href="https://lootuskollektiv.de/about">Über uns</a>
+				<a href="https://lootuskollektiv.de/about#mitgliedschaft">Mitglied werden</a>
+			</nav>
+			<a class="lootus-logo-only" href="https://lootuskollektiv.de/" aria-label="Lootus Kollektiv"><span aria-hidden="true"></span></a>
+			<nav class="lootus-desktop-nav lootus-desktop-nav-right" aria-label="Hauptnavigation">
+				<a href="https://lootuskollektiv.de/sammlungen">Sammlungen</a>
+				<a href="/" aria-current="page">Merch</a>
+				<a href="https://lootuskollektiv.de/kontakt">Kontakt</a>
+			</nav>
+			<button class="lootus-burger" type="button" data-lootus-menu-toggle aria-label="Menü öffnen" aria-expanded="false" aria-controls="lootus-nav-menu">
+				<span></span><span></span><span></span>
+			</button>
+		</div>
+	</div>
+	<div class="lootus-nav-menu" id="lootus-nav-menu" aria-hidden="true">
+		<div class="lootus-nav-panel">
+			<nav class="lootus-nav-menu-main" aria-label="Hauptnavigation">
+				<a class="lootus-nav-menu-item" href="https://lootuskollektiv.de/" style="--i:0"><span>01</span>Start</a>
+				<a class="lootus-nav-menu-item" href="https://lootuskollektiv.de/about" style="--i:1"><span>02</span>Über uns</a>
+				<a class="lootus-nav-menu-item" href="https://lootuskollektiv.de/sammlungen" style="--i:2"><span>03</span>Sammlungen</a>
+				<a class="lootus-nav-menu-item" href="/" aria-current="page" style="--i:3"><span>04</span>Merch</a>
+				<a class="lootus-nav-menu-item" href="https://lootuskollektiv.de/kontakt" style="--i:4"><span>05</span>Kontakt</a>
+				<a class="lootus-nav-menu-item" href="https://lootuskollektiv.de/about#mitgliedschaft" style="--i:5"><span>06</span>Mitglied werden</a>
+			</nav>
+			<nav class="lootus-nav-menu-legal" aria-label="Rechtliches">
+				<a class="lootus-nav-menu-item lootus-nav-menu-small" href="https://lootuskollektiv.de/impressum" style="--i:6">Impressum</a>
+				<a class="lootus-nav-menu-item lootus-nav-menu-small" href="https://lootuskollektiv.de/datenschutz" style="--i:7">Datenschutz</a>
+			</nav>
+		</div>
+	</div>
+	<!-- /wp:html -->
 	<!-- wp:woocommerce/mini-cart /-->
-</div>
+</header>
 <!-- /wp:group -->
